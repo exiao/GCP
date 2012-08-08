@@ -1,4 +1,7 @@
 # Django settings for GCP project.
+import os, sys
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(SITE_ROOT)
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -9,10 +12,11 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+db_name = SITE_ROOT + "/" + "sqlite3.db"
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': db_name,                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -115,8 +119,9 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'gcpapp',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
