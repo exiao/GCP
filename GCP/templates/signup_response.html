@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+
+
+{% block all_content %}
+
+    <div class="well span5 offset4" style="background-color: white; ">
+        {% if fail %}
+        <legend ><h1> Error </h1></legend>
+        <p>
+            That account exists already.
+        </p>
+        {% else %}
+        <legend ><h1> Application Sent! </h1></legend>
+        <p>
+            Thank you for applying. 
+            You will receive an email whether or not your application was successful.
+        </p>
+        {% endif %}
+    </div>
+
+{% endblock %}
+

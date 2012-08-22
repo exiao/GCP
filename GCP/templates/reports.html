@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+    <div class="span9">
+            <legend class="header"><h1> Reports </h1></legend>
+            <p>
+                We made $100000 this year. Hooray!
+            </p>
+    </div>
+
+{% endblock %}
+
+{% block post_js %}
+<script type="text/javascript">
+  $(document).ready( function() {
+    $("#reports-nav").addClass("active")
+  })
+</script>
+{% endblock %}

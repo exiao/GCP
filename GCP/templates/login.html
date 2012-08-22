@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+
+
+{% block all_content %}
+<div class="well span5 offset4" style="background-color: white; ">
+
+        <h2 style="text-align:center"> Sign In</h2>
+        <br>
+        <form action="."  method="post" class="form-horizontal" id="login-form">{% csrf_token %}
+        <div id="fields form">
+    {% for field in form %}
+      <div class="control-group">
+        {{ field.errors }}
+        <label for="name" class="control-label"  id="{{field.html_name}}">{{ field.label }}</label>
+        <div class="controls ">
+        {{ field }}
+          <span class="help-block">{{ field.help_text }}</span>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  {% if fail %}
+  <p style="text-align:center; color:red;"> Your username or password is incorrect. Please try again </p>
+  {% endif %}
+  <center>
+  <input type="submit" class="btn btn-primary" value="Login" />
+  </center>
+
+</div>
+{% endblock %}
+

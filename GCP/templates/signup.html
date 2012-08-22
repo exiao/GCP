@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block top_head %}
+<style type='text/css'>
+label.error {
+ float: none;
+ color: red;
+ padding-left: 60px;
+ vertical-align: top;
+ }
+ </style>
+{% endblock %}
+
+{% block content %}
+
+<div class="span9">
+<legend class="header">
+    <h2> Create an account</h2>
+  </legend>
+<form action="."  method="post" class="form-horizontal" id="sellForm">{% csrf_token %}
+  
+
+  <br />
+  <div id="fields form">
+    {% for field in form %}
+      <div class="control-group">
+        {{ field.errors }}
+        <label for="name" class="control-label signup-label" id="{{field.html_name}}">{{ field.label }}</label>
+        <div class="controls ">
+        {{ field }}
+          <span class="help-block">{{ field.help_text }}</span>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <br />
+  <input type="submit" class="btn btn-primary" value="Send Application" />
+
+  </form>
+  </div>
+
+{% endblock %}
+
+{% block post_js %}
+<script type="text/javascript" src="/static/jquery-validation-1.9.0/jquery.validate.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#sellForm").validate({
+      rules: {
+        email: {
+          required: true,
+          email: true,
+        },
+        group_name: {
+          required: true,
+        },
+        username: {
+          required: true,
+        },
+        officer_name: {
+          required: true,
+        },
+        academic_start_year: {
+          required: true,
+          number: true,
+          min: 1900,
+        },
+        password: {
+          required: true,
+          minlength: 6,
+          maxlength: 22,
+        },
+        password_again: {
+          equalTo: "#id_password"
+        },
+      } 
+    });
+    
+
+});
+</script>
+{% endblock %}

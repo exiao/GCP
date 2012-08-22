@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+    <div class="span9">
+            <legend class="header"><h1> Resources </h1></legend>
+            <p>
+                <a href="#"> Group Application </a> - Apply as a group <br>
+                <a href="#"> Intern Application </a> - Apply as an intern <br>
+                <a href="#"> Green Guide </a> - Go green people! <br>
+                <br>
+                <br>
+                Useful Links: <br>
+                <a href="http://www.google.com"> www.google.com </a><br>
+                <a href="http://www.facebook.com"> www.facebook.com </a>
+            </p>
+    </div>
+
+{% endblock %}
+
+{% block post_js %}
+<script type="text/javascript">
+  $(document).ready( function() {
+    $("#resources-nav").addClass("active")
+  })
+</script>
+{% endblock %}
