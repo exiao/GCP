@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     {% block top_head %} {% endblock %}
-
     <title>
         {% block title %}
             Home
         {% endblock %}
     </title>
+    
     <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link href="/static/style.css" rel="stylesheet">
 
@@ -33,17 +33,19 @@
                 </a>
                 <ul class="nav">
                     <li id="home-nav"><a href="/"> Home </a></li>
-                    <li id="about-nav"><a href="{% url about %}"> About </a></li>
+                    <li id="green_groups-nav"><a href="{% url green_groups %}"> Green Groups </a></li>
                     <li id="resources-nav"><a href="{% url resources %}"> Resources </a></li>
                     <li id="reports-nav"><a href="{% url reports %}"> GCP Reports </a></li>
+                    <li id="about-nav"><a href="{% url about %}"> About </a></li>
                     <li id="contact-nav"><a href="{% url contact %}"> Contact </a></li>
                 </ul>
                 <ul class="nav pull-right">
-                    {% if user.is_authenticated %}
-                        <li><a> Hi, {{ user.username }}! </a></li>
+                    {% if user.is_superuser %}
+                        <li id="superuser-nav"><a href="{% url superuser %}"> Admin </a></li>
                     {% endif %}
                     {% if user.is_authenticated %}
-                        <li><a href="/logout/"> Log out </a></li>
+                        <li id="account-nav"><a href="{% url account_profile %}"><i class="icon-cog"></i> Account</a></li>
+                        <a href="/logout/" class="btn btn-success"> Log out </a>
                     {% else %}
                         <div class="btn-group">
                             <a href="/login" class="btn"> Log In </a>
@@ -64,7 +66,20 @@
 
 </div> <!-- End container -->
 {% endblock %}
+<div class="container" id="footer-space"> </div>
 
+<div class="container">
+<div class="footer container">
+    <div class="row span10">
+        <div class="span3"> berkeley logo here</div>
+        <div class="span3"> something logo here</div>
+        <div class="span3"> stuff logo here</div>
+    </div>
+</div>
+</div>
+
+<script src="/static/javascript.js"></script>
+<script src="/static/bootstrap/js/bootstrap.js"></script>
 {% block post_js %}
 {% endblock %}
 </body>

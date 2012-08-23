@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+    <div class="span9">
+        <br>
+        <ul class="nav nav-pills" style="margin-bottom: 0px">
+            <li id="pill-profile"><a href="{% url account_profile %}">General</a></li>
+            <li id="pill-settings"><a href="{% url account_settings %}">Settings</a></li>
+        </ul>
+        {% block account_content %}
+        {% endblock %}
+    </div>
+
+{% endblock %}
+
+{% block post_js %}
+<script type="text/javascript">
+  $(document).ready( function() {
+    $("#account-nav").addClass("active")
+  })
+</script>
+{% block super_js %}{% endblock %}
+{% endblock %}

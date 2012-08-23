@@ -1,0 +1,22 @@
+{% extends "superuser/superuser.html" %}
+
+
+
+
+
+        {% block super_content %}
+                <legend class="header"><h2> Superuser Home </h2></legend>
+        <p>
+            Please select from the top to where you would like to administrate.
+        </p>
+        {% endblock %}
+
+
+{% block super_js %}
+<script type="text/javascript">
+  $(document).ready( function() {
+    $("#pill-home").addClass("active")
+  })
+</script>
+
+{% endblock %}

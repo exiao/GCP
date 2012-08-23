@@ -1,0 +1,18 @@
+{% extends "account/account.html" %}
+
+        {% block account_content %}
+                <legend class="header"><h2> Settings </h2></legend>
+        <p>
+            Settings.
+        </p>
+        {% endblock %}
+
+
+{% block super_js %}
+<script type="text/javascript">
+  $(document).ready( function() {
+    $("#pill-settings").addClass("active")
+  })
+</script>
+
+{% endblock %}

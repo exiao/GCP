@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+    <div class="span9">
+            <legend class="header"><h1> Green Groups </h1></legend>
+            <table class="table">
+            <thead>
+              <tr>
+                <th> Group Names </th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for user in verified_users %}
+                  <tr>
+                    <td>
+                    {{ user.get_profile.group_name }}
+                    </td>
+                  </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+    </div>
+
+{% endblock %}
+
+{% block post_js %}
+<script type="text/javascript">
+  $(document).ready( function() {
+    $("#green_groups-nav").addClass("active")
+  })
+</script>
+{% endblock %}

@@ -3,7 +3,9 @@
 
 
 {% block all_content %}
-<div class="well span5 offset4" style="background-color: white; ">
+<center>
+<div class="container well" style="background-color: white; width:400px;">
+
 
         <h2 style="text-align:center"> Sign In</h2>
         <br>
@@ -11,9 +13,8 @@
         <div id="fields form">
     {% for field in form %}
       <div class="control-group">
-        {{ field.errors }}
-        <label for="name" class="control-label"  id="{{field.html_name}}">{{ field.label }}</label>
-        <div class="controls ">
+        <label for="name" class="control-label small-label"  id="{{field.html_name}}">{{ field.label }}</label>
+        <div class="controls small-controls">
         {{ field }}
           <span class="help-block">{{ field.help_text }}</span>
         </div>
@@ -21,12 +22,14 @@
     {% endfor %}
   </div>
   {% if fail %}
-  <p style="text-align:center; color:red;"> Your username or password is incorrect. Please try again </p>
+  <p style="text-align:center; color:red;"> Your username or password is incorrect. Please try again. </p>
   {% endif %}
-  <center>
-  <input type="submit" class="btn btn-primary" value="Login" />
-  </center>
-
+  
+  <input type="submit" class="btn btn-primary btn-large" style="width:250px" value="Login" />
+  
 </div>
+
+</center>
+
 {% endblock %}
 

@@ -1,3 +1,12 @@
+.form-horizontal .control-label.small-label{
+    width: 100px ;
+}
+
+.form-horizontal .controls.small-controls {
+  padding-left: 0px;
+  margin-left: 100px;
+}
+
 .form-horizontal .control-label.signup-label{
 width: 170px ;
 /*text-align:left;*/
@@ -74,7 +83,7 @@ body
 .page-content {
     background-color: white;
     /*height: 100%; */
-    min-height: 90%;
+    min-height: 80%;
 }
 
 html {
@@ -93,4 +102,36 @@ html {
 
 .header {
     padding-top:20px;
+}
+
+.footer {
+    margin-top: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-top-style: solid;
+    border-color: gray;
+    border-width: 0.5px;
+}
+
+.horiz-title{
+    padding-left:20px;
+    font-weight: bold;
+    width: 200px;
+}
+
+.horiz-title{
+    float: left;
+    width: 200px;
+}
+
+.horiz-edit{
+    float: left;
+    width: 200px;
+}
+
+
+label.error {
+ float: none;
+ color: red;
+ vertical-align: top;
 }

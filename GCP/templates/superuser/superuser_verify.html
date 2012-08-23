@@ -1,0 +1,51 @@
+{% extends "superuser/superuser.html" %}
+
+
+
+
+
+        {% block super_content %}
+            <legend class="header"><h2> Verify Accounts</h2></legend>
+            
+            <form action="{% url superuser_verify %}"  method="post">{% csrf_token %}
+            <p> {{ message }} </p>
+            <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th> Action </th>
+                    <th> Username </th>
+                    <th> Group Name </th>
+                    <th> Email</th>
+                    <th> Officer Name</th>
+                    <th> Academic Start Year</th>
+                  </tr>
+                </thead>
+                {% for user in non_verified_users %}
+                <tbody>
+                  <tr>
+                    <td> 
+                      <input type="radio" name="{{ user.id }}" value="verify"> Verify<br>
+                      <input type="radio" name="{{ user.id }}" value="decline"> Decline
+                    </td>
+                    <td> {{user.username}}</td>
+                    <td> {{user.get_profile.group_name}}</td>
+                    <td> {{user.email}}</td>
+                    <td> {{user.get_profile.officer_name}}</td>
+                    <td> {{user.get_profile.academic_start_year}} </td>
+                  </tr>
+                </tbody>
+                {% endfor %}
+            </table>
+            <input type="submit" class="btn btn-primary loading" type="button" data-loading-text="Processing..." value="Submit" />
+            </form>
+        {% endblock %}
+
+
+{% block super_js %}
+<script type="text/javascript">
+  $(document).ready( function() {
+    $("#pill-verify").addClass("active")
+  })
+</script>
+
+{% endblock %}

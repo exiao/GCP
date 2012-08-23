@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+    <div class="span9">
+        <br>
+        <ul class="nav nav-pills" style="margin-bottom: 0px">
+            <li id="pill-home">
+            <a href="{% url superuser %}">Home</a>
+            </li>
+            <li id="pill-verify"><a href="{% url superuser_verify %}">Verify Accounts</a></li>
+        </ul>
+        {% block super_content %}
+                <legend class="header"><h1> Superuser Home </h1></legend>
+        <p>
+            Please select from the top to where you would like to administrate.
+        </p>
+        {% endblock %}
+    </div>
+
+{% endblock %}
+
+{% block post_js %}
+<script type="text/javascript">
+  $(document).ready( function() {
+    $("#superuser-nav").addClass("active")
+  })
+</script>
+{% block super_js %}{% endblock %}
+{% endblock %}

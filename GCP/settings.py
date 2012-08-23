@@ -158,3 +158,14 @@ LOGGING = {
         },
     }
 }
+
+# HANDLES SENDING EMAILS FROM DJANGO
+# supposedly you have to at least log into the HOST_USER at least once normally
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'email@gmail.com'
+EMAIL_HOST_PASSWORD = 'password'
+EMAIL_PORT = 587
+
+#from django.core.mail import send_mail      
+#send_mail('Test', 'meow', 'noreply@buynear.me', ['seung.j@live.com']) 
