@@ -135,3 +135,19 @@ label.error {
  color: red;
  vertical-align: top;
 }
+
+legend.smaller {
+  margin-bottom: 20px;
+}
+
+.empty-padding {
+  margin-top: 20px;
+}
+
+tr.folder {
+  background-color: rgb(217,237,247);
+}
+
+.file-delete,.folder-delete{
+  cursor: pointer;
+}

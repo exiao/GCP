@@ -1,5 +1,5 @@
 from django.http import HttpResponse,HttpResponseRedirect
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.core import serializers
 from django.utils import simplejson
@@ -200,3 +200,45 @@ def account_edit(request):
                 profile_dict[field] = new_field
                 profile.save()
         return HttpResponseRedirect('/account/profile/?update=%s' % readable_fields[field])
+        
+@login_required
+def account_files(request,folder_id):
+    data = {}
+    folder = Folder.objects.get(id=folder_id)
+    
+    #this happens on file upload
+    if request.method == "POST" and request.FILES.__contains__('file'):
+        file = request.FILES['file']
+        obj = File.objects.create(file=file,name=str(file),user=request.user)
+        profile = request.user.get_profile()
+        folder.files.add(obj)
+        message = 'File uploaded!'
+        data['message'] = message
+        #return redirect('/account/files/%d?message=%s' % (int(folder_id),message))
+        
+    #this happens on folder creation
+    elif request.method == "POST" and request.POST.__contains__('folder'):
+        folder_name = request.POST['folder']
+        new_folder = Folder.objects.create(name=folder_name,user=request.user)
+        folder.sub_folders.add(new_folder)
+        folder.save()
+        message = 'Folder created!'
+        data['message'] = message
+        #return redirect('/account/files/%d?message=%s' % (int(folder_id),message))
+        
+
+    #if request.GET.__contains__('message'):
+        #data['message'] = request.GET['message']
+    folders = folder.sub_folders.all().order_by('-timestamp')
+    files = folder.files.all().order_by('-timestamp')
+    data['folders'] = folders
+    data['files'] = files
+    return render_to_response('account/account_files.html',data, context_instance=RequestContext(request))
+        
+@login_required
+def ajax_delete_folder(request):
+    if request.method == "POST" and request.is_ajax():
+        folder_id = request.POST['folder_id']
+        folder = Folder.objects.get(id=folder_id)
+        folder.delete()
+        return HttpResponse("success")

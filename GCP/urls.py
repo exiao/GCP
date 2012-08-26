@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-
+from django.conf import settings
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
@@ -22,8 +22,12 @@ urlpatterns = patterns('gcpapp.views',
     
     #ACCOUNT SECTION
     url(r'^account/profile/$', 'account_profile', name='account_profile'),
-    url(r'^account/profile/edit$', 'account_edit', name='account_edit'),
-    url(r'^account/settings$', 'account_settings', name='account_settings'),
+    url(r'^account/profile/edit/$', 'account_edit', name='account_edit'),
+    url(r'^account/settings/$', 'account_settings', name='account_settings'),
+    url(r'^account/files/(?P<folder_id>\d+)/$', 'account_files'),
+    
+    #AJAX SECTIONS
+    url(r'^ajax_delete_folder/$','ajax_delete_folder'),
     
     
     # url(r'^GCP/', include('GCP.foo.urls')),
@@ -34,3 +38,8 @@ urlpatterns = patterns('gcpapp.views',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 )
+
+urlpatterns += patterns('',
+    (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+)
+

@@ -1,0 +1,80 @@
+{% extends "account/account.html" %}
+    {% block account_content %}
+        {% if message %}
+            <p> {{ message }} </p>
+        {% endif %}
+        
+        <table class="table">
+          <thead>
+            <tr>
+              <th> Name </th>
+              <th> Type </th>
+              <th> Creation Date </th>
+              <th style="width: 50px; text-align:center"> Delete </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for folder in folders %}
+            <tr class="folder" >
+              <td><a href="/account/files/{{ folder.id }}"><i class="icon-folder-open"></i> {{ folder.name }} </a></td>
+              <td> Folder </td>
+              <td> {{folder.timestamp}} </td>
+              <td style="width: 50px; text-align:center"> <i class="icon-trash folder-delete" value="{{folder.id}}"></i> </td>
+            </tr>
+            {% endfor %} 
+          
+            {% for file in files %}
+            <tr>
+              <td><a href="{{ file.file.url }}"><i class="icon-file"></i> {{ file.name }} </a></td>
+              <td> File </td>
+              <td> {{file.timestamp}} </td>
+              <td style="width: 50px; text-align:center"> <i class="icon-trash file-delete" value="{{file.id}}"></i> </td>
+            </tr>
+            {% endfor %} 
+          </tbody>
+        </table>
+        
+        <form action="." id="uploadForm" method="post" onsubmit="return validateUpload();" class="form-horizontal" enctype="multipart/form-data">{% csrf_token %}
+            Upload File: <input id="file-input" name="file" type="file"> <input style=" margin-left:20px" class="btn btn-primary" type="submit" value="Upload">
+            <label id="file-error" class="error" style="display:none"> Please select a file to upload </label>
+        </form>
+        
+        <form action="." method="post" onsubmit="return validateFolder();" class="form-horizontal" >{% csrf_token %}
+            New Folder: <input id="folder-input" name="folder" type="text" placeholder="Folder Name"> <input style=" margin-left:10px" class="btn btn-primary" type="submit" value="Create">
+            <label id="folder-error" class="error" style="display:none"> Please specify a folder name </label>
+        </form>
+    {% endblock %}
+
+
+{% block super_js %}
+<script type="text/javascript" src="/static/jquery-validation-1.9.0/jquery.validate.min.js"></script>
+<script type="text/javascript">
+  var csrf_token = "{{ csrf_token }}"
+
+  $(document).ready( function() {
+    $("#pill-files").addClass("active")
+  })
+  
+  function validateUpload() {
+    value = $("#file-input").val()
+    if (value == "") {
+        $("#file-error").show()
+        return false;
+    } else {
+        return true;
+    }
+  }
+  
+  function validateFolder() {
+    value = $("#folder-input").val()
+    if (value == "") {
+        $("#folder-error").show()
+        return false;
+    } else {
+        return true;
+    }
+  }
+  
+</script>
+
+{% endblock %}

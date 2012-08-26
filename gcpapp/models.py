@@ -11,6 +11,7 @@ class UserProfile(models.Model):
     group_name = models.CharField(max_length=70,null=True)
     officer_name = models.CharField(max_length=50,null=True)
     academic_start_year = models.IntegerField(null=True)
+    base_folder = models.ForeignKey("Folder",null=True)
     
 class UserForm(forms.Form):
     username = forms.CharField(max_length=30)
@@ -25,9 +26,26 @@ class LoginForm(forms.Form):
     username = forms.CharField(max_length=30)
     password = forms.CharField(widget=forms.PasswordInput , label="Password")
     
-
+def content_file_name(instance, filename):
+    return '/'.join([ instance.user.username,filename])
+    
+class Folder(models.Model):
+    user = models.ForeignKey(User)
+    name = models.CharField(max_length=50)
+    sub_folders = models.ManyToManyField("Folder")
+    files = models.ManyToManyField("File")
+    timestamp = models.DateTimeField(auto_now_add=True,null=True)
+    
+class File(models.Model):
+    user = models.ForeignKey(User)
+    name = models.CharField(max_length=50)
+    file = models.FileField(upload_to=content_file_name)
+    timestamp = models.DateTimeField(auto_now_add=True,null=True)
+    
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(user=instance)
-
+        folder = Folder.objects.create(user=instance,name='root')
+        profile = UserProfile.objects.create(user=instance,base_folder=folder)
+        
+        
 post_save.connect(create_user_profile, sender=User)
