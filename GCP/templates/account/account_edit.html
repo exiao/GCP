@@ -1,7 +1,7 @@
 {% extends "account/account.html" %}
 
         {% block account_content %}
-        <legend class="header"><h2> Change {{ read_field }} </h2></legend>
+        <legend ><h2> Change {{ read_field }} </h2></legend>
         
         <form action="{% url account_edit %}"  method="post" class="form-horizontal" id="changeForm">{% csrf_token %}
         <div style='display:none'><input type='hidden' name='field' value='{{field}}' /><input type='hidden' name='username' value='{{user.username}}' /></div>

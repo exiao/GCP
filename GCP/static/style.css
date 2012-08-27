@@ -150,3 +150,18 @@ tr.folder {
 .file-delete,.folder-delete{
   cursor: pointer;
 }
+
+.set-image-dimension {
+    width:600px;
+    height: 500px;
+}
+
+/*WARNING all h2 fonts changed*/
+h2 {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 300;
+}
+
+.brand {
+  font-family: 'Oregano', cursive;
+}

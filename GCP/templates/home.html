@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+    <!--
     <div >
-    <img class="center" src="static/powersave.jpg" style="padding-left: 0px; width:980px; height: 200px;" >
+    <img class="center" src="static/powersave.jpg" style="padding-left: 0px; width:980px; height: 175px;" >
     </div>
+    -->
     <br>
 
         <div class="span12">
-            <h1> Hi There </h1>
+            <h2> Hi There </h2>
             <p>
                 We do things like clean and stuff ohh yea,We do things like clean and stuff ohh yea,
                 We do things like clean and stuff ohh yea,We do things like clean and stuff ohh yea,
@@ -18,6 +19,39 @@
 
 
             </p>
+            <br>
+            <center>
+            <div id="myCarousel"class="carousel slide set-image-dimension">
+                <!-- Carousel items -->
+                <div class="carousel-inner">
+                    <div class="active item">
+                        <img class="set-image-dimension" src="/static/cat.jpg" alt="">
+                        <div class="carousel-caption">
+                          <h4>First Thumbnail label</h4>
+                          <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+                        </div>
+                    </div>
+                    <div class="item ">
+                        <img class="set-image-dimension" src="/static/bootstrap-mdo-sfmoma-02.jpg" alt="">
+                        <div class="carousel-caption">
+                          <h4>Second Thumbnail label</h4>
+                          <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <img class="set-image-dimension" src="/static/bootstrap-mdo-sfmoma-03.jpg" alt="">
+                        <div class="carousel-caption">
+                          <h4>Third Thumbnail label</h4>
+                          <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Carousel nav -->
+                <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+                <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+            </div>
+            </center>
+    
         </div>
 
 
@@ -27,6 +61,9 @@
 <script type="text/javascript">
   $(document).ready( function() {
     $("#home-nav").addClass("active")
+    $('.carousel').carousel({
+        pause: "hover"
+    })
   })
 </script>
 {% endblock %}
