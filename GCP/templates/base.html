@@ -45,10 +45,10 @@
                     {% endif %}
                     {% if user.is_authenticated %}
                         <li id="account-nav"><a href="{% url account_profile %}"><i class="icon-cog"></i> Account</a></li>
-                        <a href="/logout/" class="btn btn-success"> Log out </a>
+                        <a href="/logout/" class="btn btn-success" style="margin-left: 5px;"> Log out </a>
                     {% else %}
                         <div class="btn-group">
-                            <a href="/login" class="btn"> Log In </a>
+                            <a href="{% url login %}" class="btn"> Log In </a>
                             <a href="{% url signup %}" class="btn btn-success"> Sign Up</a>
                         </div>
                     {% endif %}
@@ -66,17 +66,17 @@
 
 </div> <!-- End container -->
 {% endblock %}
-<div class="container" id="footer-space"> </div>
 
-<div class="container">
+
 <div class="footer container">
-    <div class="row span10">
+    <div class="span12">
         <div class="span3"> berkeley logo here</div>
         <div class="span3"> something logo here</div>
         <div class="span3"> stuff logo here</div>
+        <div class="span2"> stuff logo here</div>
     </div>
 </div>
-</div>
+
 
 <script src="/static/javascript.js"></script>
 <script src="/static/bootstrap/js/bootstrap.js"></script>

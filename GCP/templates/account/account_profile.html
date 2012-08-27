@@ -16,6 +16,11 @@
                 <tr><td><div class="horiz-title"> Password </div> <div class="horiz-content">********* <a href="{% url account_edit %}?field=password" class="icon-pencil"></a></div>  </td></tr>
               </tbody>
             </table>
+            
+            {% if not user.is_superuser %}
+            <h4> Other Options </h2>
+            <a href="{% url account_delete %}"> Delete account </a>
+            {% endif %}
 
         {% endblock %}
 

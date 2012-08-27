@@ -205,7 +205,8 @@ def account_edit(request):
 def account_files(request,folder_id):
     data = {}
     folder = Folder.objects.get(id=folder_id)
-    
+    if request.user != folder.user:
+        return redirect('/account/profile')
     #this happens on file upload
     if request.method == "POST" and request.FILES.__contains__('file'):
         file = request.FILES['file']
@@ -213,32 +214,75 @@ def account_files(request,folder_id):
         profile = request.user.get_profile()
         folder.files.add(obj)
         message = 'File uploaded!'
-        data['message'] = message
-        #return redirect('/account/files/%d?message=%s' % (int(folder_id),message))
+        return redirect('/account/files/%d' % int(folder_id))#%d?message=%s' % (int(folder_id),message))
         
     #this happens on folder creation
     elif request.method == "POST" and request.POST.__contains__('folder'):
         folder_name = request.POST['folder']
-        new_folder = Folder.objects.create(name=folder_name,user=request.user)
+        new_folder = Folder.objects.create(name=folder_name,user=request.user,parent=folder)
         folder.sub_folders.add(new_folder)
         folder.save()
         message = 'Folder created!'
-        data['message'] = message
-        #return redirect('/account/files/%d?message=%s' % (int(folder_id),message))
+        return redirect('/account/files/%d' % int(folder_id)) #%d?message=%s' % (int(folder_id),message))
         
+    else:
+        if request.GET.__contains__('message'):
+            data['message'] = request.GET['message']
+        folders = folder.sub_folders.all().order_by('-timestamp')
+        files = folder.files.all().order_by('-timestamp')
+        
+        node = folder
+        tree = []
+        while node != None:
+            tree.append(node)
+            node = node.parent
+        tree.reverse()
+        
+        #crop out the last element to apply special properties in the front end
+        if len(tree) > 1:
+            most = tree[0:len(tree)-1]
+            data['most'] = most
+            last = tree[len(tree)-1]
+            data['last']=last
+        else:
+            data['last'] = tree[0]
 
-    #if request.GET.__contains__('message'):
-        #data['message'] = request.GET['message']
-    folders = folder.sub_folders.all().order_by('-timestamp')
-    files = folder.files.all().order_by('-timestamp')
-    data['folders'] = folders
-    data['files'] = files
-    return render_to_response('account/account_files.html',data, context_instance=RequestContext(request))
+        data['folders'] = folders
+        data['files'] = files
+        return render_to_response('account/account_files.html',data, context_instance=RequestContext(request))
         
+@login_required
+def account_delete(request):
+    data = {}
+    if request.method=="GET":
+        if request.GET.__contains__('wrong'):
+            data['wrong'] = True
+        return render_to_response('account/account_delete.html',data,context_instance=RequestContext(request))
+    else:
+        password = request.POST['password']
+        user = authenticate(username=request.user.username, password=password)
+        if user is None:
+            return redirect("/account/profile/delete?wrong=password")
+        else:
+            auth_logout(request)
+            profile = user.get_profile()
+            profile.delete()
+            user.delete()
+            message = 'Your account has been successfully deleted.'
+            return render_to_response('small_message.html',{'title':'Account Deleted','message':message}, context_instance=RequestContext(request))
+            
 @login_required
 def ajax_delete_folder(request):
     if request.method == "POST" and request.is_ajax():
         folder_id = request.POST['folder_id']
         folder = Folder.objects.get(id=folder_id)
         folder.delete()
+        return HttpResponse("success")
+        
+@login_required
+def ajax_delete_file(request):
+    if request.method == "POST" and request.is_ajax():
+        file_id = request.POST['file_id']
+        file = File.objects.get(id=file_id)
+        file.delete()
         return HttpResponse("success")

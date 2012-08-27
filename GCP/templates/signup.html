@@ -13,7 +13,7 @@ label.error {
 
 {% block content %}
 
-<div class="span9">
+<div class="span12">
 <legend class="header">
     <h2> Create an account</h2>
   </legend>
@@ -63,7 +63,8 @@ $(document).ready(function(){
         academic_start_year: {
           required: true,
           number: true,
-          min: 1900,
+          min: 1950,
+          max: 2050,
         },
         password: {
           required: true,

@@ -5,7 +5,6 @@
 
 
         {% block super_content %}
-            <legend class="header"><h2> Verify Accounts</h2></legend>
             
             <form action="{% url superuser_verify %}"  method="post">{% csrf_token %}
             <p> {{ message }} </p>

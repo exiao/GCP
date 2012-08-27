@@ -3,7 +3,7 @@
 {% block content %}
 
 
-    <div class="span9">
+    <div class="span12">
         <br>
         <ul class="nav nav-pills" style="margin-bottom: 0px">
             <li id="pill-home">
@@ -11,6 +11,7 @@
             </li>
             <li id="pill-verify"><a href="{% url superuser_verify %}">Verify Accounts</a></li>
         </ul>
+        <div class="empty-padding"> </div>
         {% block super_content %}
                 <legend class="header"><h1> Superuser Home </h1></legend>
         <p>

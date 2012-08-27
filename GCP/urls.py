@@ -13,7 +13,7 @@ urlpatterns = patterns('gcpapp.views',
     url(r'^reports/$', 'reports', name='reports'),
     url(r'^contact/$', 'contact', name='contact'),
     url(r'^signup/$', 'signup', name='signup'),
-    url(r'^login/$', 'login', name='login'),
+    url(r'^accounts/login/$', 'login', name='login'),
     url(r'^logout/$', 'logout', name='logout'),
     
     #SUPERUSER SECTION
@@ -23,12 +23,13 @@ urlpatterns = patterns('gcpapp.views',
     #ACCOUNT SECTION
     url(r'^account/profile/$', 'account_profile', name='account_profile'),
     url(r'^account/profile/edit/$', 'account_edit', name='account_edit'),
+    url(r'^account/profile/delete/$', 'account_delete', name='account_delete'),
     url(r'^account/settings/$', 'account_settings', name='account_settings'),
     url(r'^account/files/(?P<folder_id>\d+)/$', 'account_files'),
     
     #AJAX SECTIONS
     url(r'^ajax_delete_folder/$','ajax_delete_folder'),
-    
+    url(r'^ajax_delete_file/$','ajax_delete_file'),
     
     # url(r'^GCP/', include('GCP.foo.urls')),
 

@@ -39,8 +39,6 @@ padding-right: 20px;
     -moz-box-shadow: none;
     box-shadow: none;
 
-    padding-left: 5em;
-    padding-right: 5em;
 }
 
 .navbar {
@@ -76,6 +74,7 @@ padding-right: 20px;
 body
 {
     background-image:url('/static/grey_bg.png');
+    /*background-color:#92d35b;*/
     background-repeat:repeat;
     height: 100%;
 }
@@ -92,7 +91,7 @@ html {
 
 
 .container , .container-fluid{
-    width: 940px;
+    width: 980px;
 }
 
 .center {

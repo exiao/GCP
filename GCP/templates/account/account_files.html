@@ -3,8 +3,18 @@
         {% if message %}
             <p> {{ message }} </p>
         {% endif %}
+        <ul class="breadcrumb">
+            {% if most %}
+              {% for folder in most %}
+                <li><a href="/account/files/{{folder.id}}"> {{folder.name }}</a><span class="divider">/</span></li>
+              {% endfor %}
+              <li class="active"> {{ last.name }} </li>
+            {% else %}
+            <li class="active">{{last.name}}</li>
+            {% endif %}
+        </ul>
         
-        <table class="table">
+        <table class="table table-hover">
           <thead>
             <tr>
               <th> Name </th>
@@ -24,7 +34,7 @@
             {% endfor %} 
           
             {% for file in files %}
-            <tr>
+            <tr >
               <td><a href="{{ file.file.url }}"><i class="icon-file"></i> {{ file.name }} </a></td>
               <td> File </td>
               <td> {{file.timestamp}} </td>
@@ -33,9 +43,9 @@
             {% endfor %} 
           </tbody>
         </table>
-        
+        <hr>
         <form action="." id="uploadForm" method="post" onsubmit="return validateUpload();" class="form-horizontal" enctype="multipart/form-data">{% csrf_token %}
-            Upload File: <input id="file-input" name="file" type="file"> <input style=" margin-left:20px" class="btn btn-primary" type="submit" value="Upload">
+            Upload File: <input id="file-input" name="file" type="file"> <input style="" class="btn btn-primary" type="submit" value="Upload">
             <label id="file-error" class="error" style="display:none"> Please select a file to upload </label>
         </form>
         

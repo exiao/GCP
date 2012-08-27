@@ -1,0 +1,47 @@
+{% extends "account/account.html" %}
+
+        {% block account_content %}
+        <legend class="smaller"><h2> Delete Account </h2></legend>
+        
+        <form action="."  method="post" class="form-horizontal" id="deleteForm">{% csrf_token %}
+        <p> You are about to delete your account and all its associated properties (e.g. files) <b>FOREVER</b>. 
+        <br>Enter your password to finalize this process. </p>
+        <br>
+        
+        <div class="control-group">        
+            <label for="name" class="control-label" id="password"> Password</label>
+            <div class="controls ">
+            <input id="id_password" type="password" name="password" maxlength="30" />
+              <span class="help-block"></span>
+            </div>
+        </div>
+        
+
+        
+        
+        {% if wrong %}
+        <p style=" color:red;"> Your password is incorrect. Please try again. </p>
+        {% endif %}
+        <input type="submit" style="margin-left:160px" class="btn btn-warning btn-danger" value="Delete Account" />
+          
+        </form>
+        {% endblock %}
+
+
+{% block super_js %}
+<script type="text/javascript" src="/static/jquery-validation-1.9.0/jquery.validate.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#deleteForm").validate({
+      rules: {
+        password: {
+          required: true,
+        },
+      } 
+    });
+    
+
+});
+</script>
+
+{% endblock %}
