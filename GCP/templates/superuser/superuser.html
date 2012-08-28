@@ -7,9 +7,11 @@
         <br>
         <ul class="nav nav-pills" style="margin-bottom: 0px">
             <li id="pill-home">
-            <a href="{% url superuser %}">Home</a>
+            <a href="{% url superuser %}">General</a>
             </li>
             <li id="pill-verify"><a href="{% url superuser_verify %}">Verify Accounts</a></li>
+            <li id="pill-academic-year"><a href="{% url superuser_academic_year %}">Academic Year</a></li>
+            <li id="pill-questions"><a href="{% url superuser_questions %}">Checklist Questions</a></li>
         </ul>
         <div class="empty-padding"> </div>
         {% block super_content %}

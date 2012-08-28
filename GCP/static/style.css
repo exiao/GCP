@@ -77,16 +77,25 @@ body
     /*background-color:#92d35b;*/
     background-repeat:repeat;
     height: 100%;
+    bottom: 0;
 }
 
 .page-content {
     background-color: white;
     /*height: 100%; */
     min-height: 80%;
+    margin-bottom: 20px;
+}
+
+.page-stretch {
+    min-height: 80%;
+    margin-bottom: 20px;
 }
 
 html {
     height: 100%;
+    bottom: 0;
+
 }
 
 
@@ -104,12 +113,36 @@ html {
 }
 
 .footer {
-    margin-top: 20px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    position: relative;
+    bottom: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
     border-top-style: solid;
-    border-color: gray;
-    border-width: 0.5px;
+    border-color: rgb(224, 224, 224);;
+    border-width: 1px;
+    background-color: rgb(248, 248, 248);;
+    padding-top: 20px;
+    height: 8%;
+    width: 100%;
+}
+
+/* unused
+footer {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+    padding-top: 2%;
+    height: 3%;
+    width: 100%;
+} */
+
+.footer-wrapper {
+    background-color:#92d35b;
+    height: auto !important;
+}
+
+.no-bottom {
+    margin-bottom: 0px !important;
+    padding-bottom: 0px !important;
 }
 
 .horiz-title{
@@ -164,4 +197,9 @@ h2 {
 
 .brand {
   font-family: 'Oregano', cursive;
+}
+
+.points-title, .points-title:hover {
+    color: black;
+    text-decoration: no-underline !important;
 }

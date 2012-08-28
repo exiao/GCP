@@ -1,0 +1,69 @@
+{% extends "superuser/superuser.html" %}
+
+{% block title %} Admin - Checklist Questions{% endblock %}
+
+{% block super_content %}
+    {% if message %}
+        <p style="color:red">{{ message }}</p>
+    {% endif %}
+
+    <table class="table table-bordered">
+        <caption><h2> Current checklist questions </h2></caption>
+        <thead>
+        <tr>
+            <th> Question</th>
+            <th> Points </th>
+            <th> Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for question in questions %}
+            <form action="." method="post" onsubmit="return confirm('You\'re going to lose all user related question data, are you sure you want to proceed?')">{% csrf_token %}
+                <input type="hidden" name="delete_question_base" value="{{ question.id }}" />
+
+                <tr>
+                    <td> {{question.question_text}}</td>
+                    <td> {{question.point_value}}</td>
+                    <td>
+                        <input type="submit" class="btn btn-danger btn-small" value='Delete' />
+
+                    </td>
+                </tr>
+
+            </form>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <form action="." method="post" id="questionForm">{% csrf_token %}
+        <h4>Add New Question</h4>
+        <p>
+            <label style="width:150px">Question</label> <textarea rows="5" style="width: 70%" name="question_text"></textarea>
+            <br>
+            <label style="width:150px">Points Value</label> <input name="point_value" type="text" />
+        </p>
+        <input type="submit" class="btn btn-primary" type="button" value="Submit" />
+    </form>
+{% endblock %}
+
+{% block super_js %}
+    <script type="text/javascript" src="/static/jquery-validation-1.9.0/jquery.validate.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready( function() {
+            $("#pill-questions").addClass("active");
+            $("#questionForm").validate({
+                rules: {
+                    point_value: {
+                        required: true,
+                        number:true
+                    },
+                    question_text: {
+                        required: true
+                    }
+                }
+            })
+        })
+    </script>
+
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends "account/account.html" %}
+
+{% block title %} Checklist {% endblock %}
+
+
+{% block account_content %}
+    <ul class="breadcrumb">
+        {% for a_year in all_years %}
+            <li><a href="../{{a_year.year}}"> {{ a_year.year }}</a><span class="divider">/</span></li>
+        {% endfor %}
+
+        {% if most %}
+            {% for folder in most %}
+                <li><a href="/account/files/{{folder.id}}"> {{folder.name }}</a><span class="divider">/</span></li>
+            {% endfor %}
+            <li class="active"> {{ last.name }} </li>
+        {% else %}
+            <li class="active">{{last.name}}</li>
+        {% endif %}
+    </ul>
+
+    {% if message %}
+        <p style="color:red">{{ message }}</p>
+    {% endif %}
+
+    <legend><h2>Your {{ year }} Checklist</h2></legend>
+
+    <form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
+    {% for question in questions %}
+    <div class="accordion" id="accordion-{{ question.id }}">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-{{ question.id }}" href="#collapse-{{ question.id }}">
+                    {{ question.question_text }}
+
+                    <span class="points-title">
+                        - Points: {{ question.point_value }}
+                        {% if question.is_approved %}
+                        (<i class="icon icon-ok"></i> Approved )
+                        {% endif %}
+                    </span>
+                </a>
+            </div>
+            <div id="collapse-{{ question.id }}" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <p>
+                        <p>
+                            Points: <b>{{ question.point_value }}</b> <br>
+                            Approved:
+                            {% if question.is_approved %}
+                            Yes
+                            {% else %}
+                            No
+                            {% endif %}
+                        </p>
+
+                        <label>Description/Documentation</label>
+                        <textarea name="{{ question.id }}_description" rows="5" style="min-width: 90%; max-width: 100%">{{ question.description }}</textarea>
+
+                        <br><br>
+                        {% if question.files.all|length > 0  %}
+                            <label>Current Documents/Photos</label>
+                            {% for file in question.files.all %}
+                                <a href="{{ file.file.url }}">{{ file.name }} </a>
+                                <input style="margin-left:10px; margin-top:-3px;" type="checkbox" name="file_delete" value="{{ file.id }}" /> Delete
+                                <br>
+                            {% endfor %}
+                            <br>
+                        {% endif %}
+                        <label style="padding-bottom: 0px;">Upload Documents/Photos</label>
+                        <div id="upload-files-{{ question.id }}">
+                            <input name="{{ question.id }}_file" type="file">
+                        </div>
+                        <br>
+                        <a href="#" onclick="return false;" class="upload-more" value="{{ question.id }}"> <i class="icon-plus"></i> click here to upload more</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <input type="submit" class="btn btn-primary" value="Update" />
+    </form>
+
+{% endblock %}
+
+
+{% block super_js %}
+    <script type="text/javascript">
+        $(document).ready( function() {
+            $("#pill-checklist").addClass("active");
+            $(".upload-more").click(function(){
+                var question_id = $(this).attr("value");
+                var new_upload_html = '<br><input name="' + question_id + '_file" type="file">'
+                $("#upload-files-"+question_id).append(new_upload_html)
+            })
+        })
+    </script>
+
+{% endblock %}

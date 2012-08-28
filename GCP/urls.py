@@ -18,7 +18,9 @@ urlpatterns = patterns('gcpapp.views',
     
     #SUPERUSER SECTION
     url(r'^superuser/$', 'superuser', name='superuser'),
-    url(r'^superuser/verify$', 'superuser_verify', name='superuser_verify'),
+    url(r'^superuser/verify/$', 'superuser_verify', name='superuser_verify'),
+    url(r'^superuser/academic_year/$', 'superuser_academic_year', name='superuser_academic_year'),
+    url(r'^superuser/questions/$', 'superuser_questions', name='superuser_questions'),
     
     #ACCOUNT SECTION
     url(r'^account/profile/$', 'account_profile', name='account_profile'),
@@ -26,6 +28,9 @@ urlpatterns = patterns('gcpapp.views',
     url(r'^account/profile/delete/$', 'account_delete', name='account_delete'),
     url(r'^account/settings/$', 'account_settings', name='account_settings'),
     url(r'^account/files/(?P<folder_id>\d+)/$', 'account_files'),
+    url(r'^account/checklist/$', 'account_checklist_redirect', name='account_checklist_redirect'),
+    url(r'^account/checklist/(?P<year>\d+)/$', 'account_checklist'),
+    url(r'^account/checklist/(?P<year>\d+)/upload/(?P<question_id>\d+)$', 'account_upload_to_question'),
     
     #AJAX SECTIONS
     url(r'^ajax_delete_folder/$','ajax_delete_folder'),

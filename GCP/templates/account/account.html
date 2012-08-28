@@ -8,6 +8,7 @@
         <ul class="nav nav-pills" style="margin-bottom: 0px">
             <li id="pill-profile"><a href="{% url account_profile %}">General</a></li>
             <li id="pill-files"><a href="/account/files/{{ user.get_profile.base_folder.id }}/">Files</a></li>
+            <li id="pill-checklist"><a href="{% url account_checklist_redirect %}">Checklist</a></li>
         </ul>
                 <div class="empty-padding"> </div>
         {% block account_content %}

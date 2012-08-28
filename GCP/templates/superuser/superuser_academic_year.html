@@ -1,0 +1,64 @@
+{% extends "superuser/superuser.html" %}
+
+{% block title %} Admin - Academic Year{% endblock %}
+
+{% block super_content %}
+    {% if message %}
+    <p style="color:red">{{ message }}</p>
+    {% endif %}
+    <p>
+        For each year that exists, users will have a questionnaire they can fill out.
+        Make sure not to have any unnecessary years. Be EXTREMELY careful when you delete a year as all user data from that year will be lost.
+        Also, note that the active year will be the current greatest year.
+    </p>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th> Academic Year</th>
+            <th> Delete </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for year in years %}
+            <form action="." method="post" id="yearForm" onsubmit="return confirm('You\'re going to lose all data associated with this year, are you sure you want to proceed?')">{% csrf_token %}
+            <input type="hidden" name="delete_year" value="{{ year.id }}" />
+
+            <tr>
+                <td> {{year.year}}</td>
+                <td>
+                    <input type="submit" class="btn btn-danger btn-small" value='Delete' />
+
+                </td>
+            </tr>
+
+            </form>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <form action="." method="post" id="yearForm">{% csrf_token %}
+    <h4>Add New Year</h4>
+    <p><span style="padding-right:10px;">Year</span> <input type="text" name="new_year" /></p>
+    <input type="submit" class="btn btn-primary" type="button" value="Submit" />
+    </form>
+{% endblock %}
+
+{% block super_js %}
+    <script type="text/javascript" src="/static/jquery-validation-1.9.0/jquery.validate.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready( function() {
+            $("#pill-academic-year").addClass("active");
+            $("#yearForm").validate({
+                rules: {
+                    new_year: {
+                        required: true,
+                        number:true
+                    }
+                }
+            })
+        })
+    </script>
+
+{% endblock %}

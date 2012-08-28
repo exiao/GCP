@@ -11,6 +11,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail      
 from settings import EMAIL_HOST_USER
+from django.db.models import Max, Sum
 
 def home(request):
     return render_to_response('home.html', context_instance=RequestContext(request))
@@ -79,7 +80,7 @@ def signup(request):
         user_profile.save()
         title = "Application Sent!"
         message = "Thank you for applying. You will receive an email whether or not your application was successful."
-        return render_to_response('signup_response.html',{'title':title,'message':message}, context_instance=RequestContext(request))
+        return render_to_response('small_message.html',{'title':title,'message':message}, context_instance=RequestContext(request))
 
 def login(request):
     if request.method == "GET":
@@ -131,18 +132,76 @@ def superuser_verify(request):
             user = User.objects.get(id=int(user_pk))
             if action == "verify":
                 user.is_active = True
+                user.get_profile().delete_me = False
+                user.get_profile().save()
                 #send_mail('ASUC Green Cat Application', "Congratulations, you're application has been approved. Your username is \"%s\" and you can now log in." % user.username, EMAIL_HOST_USER, [user.email])
                 user.save()
             else:
                 #send_mail('ASUC Green Cat Application', "Sorry, you're application was declined.", EMAIL_HOST_USER, [user.email])
+                user.get_profile().delete()
                 user.delete()
             data['message'] = "Actions successfully processed."
     
     non_verified_users = User.objects.filter(is_active=False)
     data['non_verified_users'] = non_verified_users
+
+    delete_profiles = UserProfile.objects.filter(delete_me=True)
+    data['delete_profiles'] = delete_profiles
     return render_to_response('superuser/superuser_verify.html',data, context_instance=RequestContext(request))
 
-    
+@login_required
+def superuser_academic_year(request):
+    data = {}
+    if request.user.is_superuser == False:
+        return HttpResponseRedirect('/')
+    if request.method == "POST":
+
+        if request.POST.__contains__("new_year"):
+            new_year = request.POST["new_year"]
+            try:
+                AcademicYear.objects.get(year=new_year)
+                data['message'] = "You can't add the year %d, because it already exists." % int(new_year)
+            except:
+                AcademicYear.objects.create(year=new_year)
+                data['message'] = "The academic year %d has been added." % int(new_year)
+        if request.POST.__contains__("delete_year"):
+            delete_year_pk = request.POST["delete_year"]
+            obj = AcademicYear.objects.get(id=delete_year_pk)
+            year = obj.year
+            obj.delete()
+            data['message'] = "Year %d deleted" % year
+
+    years = AcademicYear.objects.all().order_by('-year')
+    data['years'] = years
+    return render_to_response('superuser/superuser_academic_year.html',data, context_instance=RequestContext(request))
+
+@login_required
+def superuser_questions(request):
+    if request.method == "GET":
+        data = {}
+        if request.user.is_superuser == False:
+            return HttpResponseRedirect('/')
+        questions = QuestionBase.objects.all()
+        data['questions'] = questions
+        if request.GET.__contains__("message"):
+            data['message'] = request.GET['message']
+        return render_to_response('superuser/superuser_questions.html',data, context_instance=RequestContext(request))
+    else:
+        if request.POST.__contains__('question_text'):
+            question_text = request.POST['question_text']
+            point_value = request.POST['point_value']
+            object,is_created = QuestionBase.objects.get_or_create(question_text=question_text, point_value=point_value)
+            if is_created:
+                message = "Question successfully created!"
+            else:
+                message = "That question and point value already exist."
+            return redirect('/superuser/questions/?message=%s' % message)
+        elif request.POST.__contains__('delete_question_base'):
+            question_base_id = request.POST['delete_question_base']
+            QuestionBase.objects.get(id=question_base_id).delete()
+            message = "Question deleted."
+            return redirect('/superuser/questions/?message=%s' % message)
+
 @login_required
 def account_settings(request):
     return render_to_response('account/account_settings.html', context_instance=RequestContext(request))
@@ -233,7 +292,7 @@ def account_files(request,folder_id):
         
         node = folder
         tree = []
-        while node != None:
+        while node is not None:
             tree.append(node)
             node = node.parent
         tree.reverse()
@@ -266,11 +325,78 @@ def account_delete(request):
         else:
             auth_logout(request)
             profile = user.get_profile()
-            profile.delete()
-            user.delete()
-            message = 'Your account has been successfully deleted.'
-            return render_to_response('small_message.html',{'title':'Account Deleted','message':message}, context_instance=RequestContext(request))
-            
+            profile.delete_me = True
+            profile.save()
+            #profile.delete()
+            #user.delete()
+            message = 'Your request to delete your account has been sent.'
+            return render_to_response('small_message.html',{'title':'Delete Request Sent','message':message}, context_instance=RequestContext(request))
+
+@login_required
+def account_checklist_redirect(request):
+    data = {}
+    max_year = AcademicYear.objects.all().aggregate(Max('year'))['year__max']
+    if max_year is None:
+        return render_to_response('small_message.html', {'title': 'Error','message':'Sorry, no active academic year exists. Please contact an administrator.' }, context_instance=RequestContext(request))
+    return redirect('/account/checklist/%d' % max_year)
+
+@login_required
+def account_checklist(request,year):
+    data = {}
+    data['year'] = year
+    academic_year = AcademicYear.objects.get(year=year)
+    if request.method == "GET":
+        if request.GET.__contains__('message'):
+            data['message'] = request.GET['message']
+        checklist, created = Checklist.objects.get_or_create(user=request.user, academic_year=academic_year)
+
+        for question_base in QuestionBase.objects.all():
+            if not checklist.questions.filter(question_base=question_base).exists():
+                question,created = Question.objects.get_or_create(user=request.user,
+                    question_base = question_base,
+                    question_text = question_base.question_text,
+                    point_value = question_base.point_value,
+                    academic_year = academic_year)
+                checklist.questions.add(question)
+
+        questions = checklist.questions.all()
+        data['questions'] = questions
+        data['checklist'] = checklist
+        data['all_years'] = AcademicYear.objects.all().order_by('year')
+        return render_to_response('account/account_checklist.html',data,context_instance=RequestContext(request))
+    else:
+        checklist = Checklist.objects.get(user=request.user, academic_year=academic_year)
+        for question in checklist.questions.all():
+            description_key = str(question.id) + "_description"
+            if request.POST.__contains__(description_key):
+                description = request.POST[description_key]
+                question.description = description
+
+            files_key = str(question.id) + "_file"
+            files_list = request.FILES.getlist(files_key)
+
+            for file in files_list:
+                obj = File.objects.create(file=file,name=str(file),user=request.user)
+                question.files.add(obj)
+
+            question.save()
+
+        for file_id in request.POST.getlist("file_delete"):
+            File.objects.get(id=file_id).delete()
+
+        return redirect('/account/checklist/%d/?message=Checklist updated!' % int(year))
+
+#unused
+@login_required
+def account_upload_to_question(request,year,question_id):
+    question = Question.objects.get(id=question_id)
+    file = request.FILES['file']
+    obj = File.objects.create(file=file,name=str(file),user=request.user)
+    question.files.add(obj)
+    #return HttpResponse(file)
+    return redirect('/account/checklist')
+
+
 @login_required
 def ajax_delete_folder(request):
     if request.method == "POST" and request.is_ajax():

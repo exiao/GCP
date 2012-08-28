@@ -35,10 +35,10 @@
                 </a>
                 <ul class="nav">
                     <li id="home-nav"><a href="/"> Home </a></li>
+                    <li id="about-nav"><a href="{% url about %}"> About </a></li>
                     <li id="green_groups-nav"><a href="{% url green_groups %}"> Green Groups </a></li>
                     <li id="resources-nav"><a href="{% url resources %}"> Resources </a></li>
                     <li id="reports-nav"><a href="{% url reports %}"> GCP Reports </a></li>
-                    <li id="about-nav"><a href="{% url about %}"> About </a></li>
                     <li id="contact-nav"><a href="{% url contact %}"> Contact </a></li>
                 </ul>
                 <ul class="nav pull-right">
@@ -70,12 +70,14 @@
 {% endblock %}
 
 
-<div class="footer container">
+<div class="footer">
+    <div class="container">
     <div class="span12">
         <div class="span3"> berkeley logo here</div>
         <div class="span3"> something logo here</div>
         <div class="span3"> stuff logo here</div>
         <div class="span2"> stuff logo here</div>
+    </div>
     </div>
 </div>
 

@@ -1,18 +1,21 @@
 {% extends "account/account.html" %}
+    {% block title %}Files{% endblock %}
+
     {% block account_content %}
+        <ul class="breadcrumb">
+            {% if most %}
+                {% for folder in most %}
+                    <li><a href="/account/files/{{folder.id}}"> {{folder.name }}</a><span class="divider">/</span></li>
+                {% endfor %}
+                <li class="active"> {{ last.name }} </li>
+            {% else %}
+                <li class="active">{{last.name}}</li>
+            {% endif %}
+        </ul>
         {% if message %}
             <p> {{ message }} </p>
         {% endif %}
-        <ul class="breadcrumb">
-            {% if most %}
-              {% for folder in most %}
-                <li><a href="/account/files/{{folder.id}}"> {{folder.name }}</a><span class="divider">/</span></li>
-              {% endfor %}
-              <li class="active"> {{ last.name }} </li>
-            {% else %}
-            <li class="active">{{last.name}}</li>
-            {% endif %}
-        </ul>
+
         
         <table class="table table-hover">
           <thead>

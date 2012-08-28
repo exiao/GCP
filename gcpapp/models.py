@@ -13,6 +13,7 @@ class UserProfile(models.Model):
     officer_name = models.CharField(max_length=50,null=True)
     academic_start_year = models.IntegerField(null=True)
     base_folder = models.ForeignKey("Folder",null=True)
+    delete_me = models.BooleanField(default=False)
     
     def delete(self, *args, **kwargs):
         self.base_folder.delete()
@@ -60,16 +61,54 @@ class File(models.Model):
     def delete(self, *args, **kwargs):
         self.file.delete()
         super(File, self).delete(*args, **kwargs)
+
+class AcademicYear(models.Model):
+    year = models.IntegerField(unique=True)
+    def __unicode__(self):
+        return str(self.year)
+
+class QuestionBase(models.Model):
+    question_text = models.TextField()
+    point_value = models.IntegerField()
+    def delete(self, *args, **kwargs):
+        for question in self.question_base.all():
+            question.delete()
+        super(QuestionBase, self).delete(*args, **kwargs)
+
+class Question(models.Model):
+    #AcademicYear.objects.filter(year=2012).aggregate(Sum('year'))
+    user = models.ForeignKey(User)
+    question_base = models.ForeignKey(QuestionBase,related_name="question_base")
+    academic_year = models.ForeignKey(AcademicYear)
+    question_text = models.TextField(null=True)
+    description = models.TextField(default="",blank=True)
+    files = models.ManyToManyField("File")
+    is_approved = models.BooleanField(default=False)
+    point_value = models.IntegerField(null=True)
+    def delete(self, *args, **kwargs):
+        for file in self.files.all():
+            file.delete()
+        super(Question, self).delete(*args, **kwargs)
+
+class Checklist(models.Model):
+    user = models.ForeignKey(User)
+    questions = models.ManyToManyField("Question")
+    academic_year = models.ForeignKey("AcademicYear")
+    def __unicode__(self):
+        return str(self.user) + "-" + str(self.academic_year.year)
+
     
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         folder = Folder.objects.create(user=instance,name='Base')
         finance = Folder.objects.create(user=instance,name='Finance',parent=folder)
         pictures = Folder.objects.create(user=instance,name='Pictures',parent=folder)
-        miscellaneous = Folder.objects.create(user=instance,name='Miscellaneous',parent=folder) 
+        miscellaneous = Folder.objects.create(user=instance,name='Miscellaneous',parent=folder)
+        reports = Folder.objects.create(user=instance,name='Reports',parent=folder)
         folder.sub_folders.add(finance)
         folder.sub_folders.add(pictures)
         folder.sub_folders.add(miscellaneous)
+        folder.sub_folders.add(reports)
         profile = UserProfile.objects.create(user=instance,base_folder=folder)
         
         
