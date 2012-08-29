@@ -39,6 +39,7 @@ def signup(request):
     else:
         username = request.POST['username']
         group_name = request.POST['group_name']
+        group_description = request.POST['group_description']
         email = request.POST['email']
         officer_name = request.POST['officer_name']
         academic_start_year = request.POST['academic_start_year']
@@ -77,6 +78,7 @@ def signup(request):
         user_profile.officer_name = officer_name
         user_profile.academic_start_year = academic_start_year
         user_profile.group_name = group_name
+        user_profile.group_description = group_description
         user_profile.save()
         title = "Application Sent!"
         message = "Thank you for applying. You will receive an email whether or not your application was successful."
@@ -177,10 +179,11 @@ def superuser_academic_year(request):
 
 @login_required
 def superuser_questions(request):
+    if request.user.is_superuser == False:
+        return HttpResponseRedirect('/')
+
     if request.method == "GET":
         data = {}
-        if request.user.is_superuser == False:
-            return HttpResponseRedirect('/')
         questions = QuestionBase.objects.all()
         data['questions'] = questions
         if request.GET.__contains__("message"):
@@ -201,7 +204,88 @@ def superuser_questions(request):
             QuestionBase.objects.get(id=question_base_id).delete()
             message = "Question deleted."
             return redirect('/superuser/questions/?message=%s' % message)
-
+            
+@login_required
+def superuser_staff(request):
+    data = {}
+    if request.user.is_superuser == False:
+        return HttpResponseRedirect('/')
+    if request.method == "GET":
+        if request.GET.__contains__('message'):
+            data['message'] = request.GET['message']
+            
+        data['staff_members'] = User.objects.filter(is_staff=True)
+        return render_to_response('superuser/superuser_staff.html',data, context_instance=RequestContext(request))
+        
+@login_required
+def superuser_staff_user(request,user_id):
+    data = {}
+    if request.user.is_superuser == False:
+        return HttpResponseRedirect('/')
+        
+    this_user = User.objects.get(id=user_id)
+    profile = this_user.get_profile()
+        
+    if request.method == "GET":
+        all_groups = User.objects.filter(is_staff=False,is_active=True)
+        my_groups = profile.my_groups.all()
+        data['all_groups'] = all_groups
+        data['my_groups'] = my_groups
+        data['this_user'] = this_user
+        if request.GET.__contains__('message'):
+            data['message'] = request.GET['message']
+        return render_to_response('superuser/superuser_staff_user.html',data, context_instance=RequestContext(request))
+    else:
+        all_groups = User.objects.filter(is_staff=False,is_active=True)
+        for group in all_groups:
+            is_admin = request.POST[str(group.id)]
+            if is_admin == "yes":
+                profile.my_groups.add(group)
+            else:
+                profile.my_groups.remove(group)
+        return redirect('/superuser/staff/%d/?message=Privileges Updated!' % this_user.id)
+        
+    
+@login_required
+def superuser_staff_create(request):
+    data = {}
+    if request.user.is_superuser == False:
+        return HttpResponseRedirect('/')
+    if request.method == "GET":
+        return render_to_response('superuser/superuser_staff_create.html',data, context_instance=RequestContext(request))
+    else:
+        username = request.POST['username']
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        email = request.POST['email']
+        password = request.POST['password']
+        account_type = request.POST['account_type']
+        
+        try:
+            user = User.objects.get(username=username)
+            if user.is_active == False:
+                user.delete()
+                raise Exception
+            title = "Sign Up Error"
+            message = "That username exists already."
+            return render_to_response('small_message.html', {'title': title,'message':message }, context_instance=RequestContext(request))
+        except:
+            pass
+        
+        new_user = User()
+        new_user.username = username
+        new_user.email = email
+        new_user.first_name = first_name
+        new_user.last_name = last_name
+        new_user.set_password(password)
+        new_user.is_staff = True
+        if account_type == "superuser":
+            new_user.is_superuser = True
+        new_user.save()
+        
+        return redirect('/superuser/staff/?message=Staff member created!')
+        
+#unused
 @login_required
 def account_settings(request):
     return render_to_response('account/account_settings.html', context_instance=RequestContext(request))
@@ -215,7 +299,9 @@ def account_profile(request):
     
 @login_required
 def account_edit(request):
-    readable_fields = {'group_name':'Group Name', 'password': 'Password','email':'Email','officer_name':'Officer Name','academic_start_year':'Academic Start Year'}
+    readable_fields = {'group_name':'Group Name', 'password': 'Password','email':'Email','officer_name':'Officer Name',
+        'academic_start_year':'Academic Start Year','group_description':'Group Description',
+        'first_name':'First Name','last_name':'Last Name'}
     if request.method == "GET":
         field = request.GET['field']
         user = request.user
@@ -385,16 +471,6 @@ def account_checklist(request,year):
             File.objects.get(id=file_id).delete()
 
         return redirect('/account/checklist/%d/?message=Checklist updated!' % int(year))
-
-#unused
-@login_required
-def account_upload_to_question(request,year,question_id):
-    question = Question.objects.get(id=question_id)
-    file = request.FILES['file']
-    obj = File.objects.create(file=file,name=str(file),user=request.user)
-    question.files.add(obj)
-    #return HttpResponse(file)
-    return redirect('/account/checklist')
 
 
 @login_required

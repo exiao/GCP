@@ -85,6 +85,7 @@ body
     /*height: 100%; */
     min-height: 80%;
     margin-bottom: 20px;
+    padding-bottom: 20px;
 }
 
 .page-stretch {
@@ -202,4 +203,19 @@ h2 {
 .points-title, .points-title:hover {
     color: black;
     text-decoration: no-underline !important;
+}
+
+textarea.readonly.modal-textarea {
+    cursor: default;
+    width: 95%;
+    max-width: 95%;
+    background-color: white;
+}
+
+textarea.readonly {
+    cursor: default;
+}
+
+.pad-radio-top {
+    margin-top: -3px;
 }

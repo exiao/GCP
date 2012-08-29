@@ -1,0 +1,51 @@
+{% extends "superuser/superuser.html" %}
+
+{% block title %} Admin - Edit Staff{% endblock %}
+
+{% block super_content %}
+    {% if message %}
+    <p style="color:red; text-align:center">{{ message }}</p>
+    {% endif %}
+    <p style="text-align:center"> Editting privileges for <b>{{ this_user.first_name }} {{ this_user.last_name }}</b>.</>
+    <form action="."  method="post">{% csrf_token %}
+    <table class="table table-bordered">
+        <caption><h2>All Groups</h2></caption>
+        <thead>
+            <tr>
+                <th> Username </th>
+                <th> Group Name </th>
+                <th style="width:100px;"> Can Admin</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for group in all_groups %}
+            <tr>
+                <td> {{ group.username }} </td>
+                <td> {{ group.get_profile.group_name }} </td>
+                <td>
+                    {% if group in my_groups %}
+                    <input style="margin-top: -3px;" type="radio" name="{{ group.id }}" value="yes" checked> Yes <br>
+                    <input style="margin-top: -3px;" type="radio" name="{{ group.id }}" value="no"> No
+                    {% else %}
+                    <input style="margin-top: -3px;" type="radio" name="{{ group.id }}" value="yes"> Yes <br>
+                    <input style="margin-top: -3px;" type="radio" name="{{ group.id }}" value="no" checked> No
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <input type="submit" class="btn btn-primary loading" type="button" data-loading-text="Submitting..." value="Submit" />
+    </form>
+    
+{% endblock %}
+
+{% block super_js %}
+    <script type="text/javascript">
+        $(document).ready( function() {
+
+            
+        })
+    </script>
+
+{% endblock %}

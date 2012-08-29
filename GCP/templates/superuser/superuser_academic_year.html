@@ -6,11 +6,6 @@
     {% if message %}
     <p style="color:red">{{ message }}</p>
     {% endif %}
-    <p>
-        For each year that exists, users will have a questionnaire they can fill out.
-        Make sure not to have any unnecessary years. Be EXTREMELY careful when you delete a year as all user data from that year will be lost.
-        Also, note that the active year will be the current greatest year.
-    </p>
 
     <table class="table table-bordered">
         <thead>
@@ -43,6 +38,14 @@
     <p><span style="padding-right:10px;">Year</span> <input type="text" name="new_year" /></p>
     <input type="submit" class="btn btn-primary" type="button" value="Submit" />
     </form>
+    
+    <br>
+    <h4> Note </h4>
+    <p>
+        For each year that exists, users will have a questionnaire they can fill out.<br>
+        Make sure not to have any unnecessary years and be EXTREMELY careful when you delete a year as all user data from that year will be lost.<br>
+        Also, note that the active year will be the current greatest year.<br><br>
+    </p>
 {% endblock %}
 
 {% block super_js %}

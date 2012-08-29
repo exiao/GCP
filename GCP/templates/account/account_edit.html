@@ -12,7 +12,11 @@
         <div class="control-group">        
             <label class="control-label" id="username">Current {{read_field}}</label>
             <div class="controls " style="padding-top:5px; ">
+            {% if field != "group_description" %}
             <span >{{ data_field }} </span>
+            {%else %}
+            <textarea style="width:70%" rows="9" class="readonly" readonly="readonly">{{user.get_profile.group_description}}</textarea>
+            {% endif %}
               <span class="help-block"></span>
             </div>
           </div>
@@ -20,7 +24,11 @@
         <div class="control-group">        
             <label class="control-label" id="{{field}}">New {{read_field}}</label>
             <div class="controls ">
+            {% if field != "group_description" %}
             <input id="id_{{field}}" type="text" name="{{field}}" maxlength="30" value="{{ old_field }}" />
+            {% else %}
+            <textarea style="width:70%" rows="9" name="group_description">{{user.get_profile.group_description}}</textarea>
+            {% endif %}
               <span class="help-block"></span>
             </div>
         </div>

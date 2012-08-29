@@ -14,6 +14,10 @@ class UserProfile(models.Model):
     academic_start_year = models.IntegerField(null=True)
     base_folder = models.ForeignKey("Folder",null=True)
     delete_me = models.BooleanField(default=False)
+    group_description = models.TextField()
+    
+    #if user is an admin
+    my_groups = models.ManyToManyField(User,related_name="my_groups_set")
     
     def delete(self, *args, **kwargs):
         self.base_folder.delete()
@@ -22,6 +26,7 @@ class UserProfile(models.Model):
 class UserForm(forms.Form):
     username = forms.CharField(max_length=30)
     group_name = forms.CharField(max_length=70)
+    group_description = forms.CharField(widget=forms.Textarea)
     email = forms.EmailField()
     officer_name = forms.CharField(max_length=50, label="Sustainability Officer Name")
     academic_start_year = forms.IntegerField()
@@ -110,6 +115,9 @@ def create_user_profile(sender, instance, created, **kwargs):
         folder.sub_folders.add(miscellaneous)
         folder.sub_folders.add(reports)
         profile = UserProfile.objects.create(user=instance,base_folder=folder)
+        if instance.is_superuser:
+            for user in User.objects.filter(is_staff=False):
+                profile.my_groups.add(user)
         
         
 post_save.connect(create_user_profile, sender=User)

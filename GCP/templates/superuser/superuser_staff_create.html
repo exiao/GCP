@@ -1,0 +1,144 @@
+{% extends "superuser/superuser.html" %}
+
+{% block title %} Admin - Create Staff{% endblock %}
+
+{% block top_head %}
+<style type='text/css'>
+label.error {
+ float: none;
+ color: red;
+ padding-left: 30px;
+ vertical-align: top;
+ }
+ </style>
+{% endblock %}
+
+{% block super_content %}
+    {% if message %}
+    <p style="color:red">{{ message }}</p>
+    {% endif %}
+    <div class="span12">
+    <legend><h2> Create New Staff Member </h2></legend>
+    <form action="."  method="post" class="form-horizontal" id="sellForm">
+    {% csrf_token %}
+  
+
+      <br />
+      <div id="fields form">
+    
+      <div class="control-group">
+        
+        <label  class="control-label signup-label" id="username">Username</label>
+        <div class="controls ">
+        <input id="id_username" type="text" name="username" maxlength="30" />
+          <span class="help-block"></span>
+        </div>
+      </div>
+    
+      <div class="control-group">
+        
+        <label class="control-label signup-label" id="first_name">First Name</label>
+        <div class="controls ">
+        <input id="id_first_name" type="text" name="first_name" maxlength="50" />
+          <span class="help-block"></span>
+        </div>
+      </div>
+    
+      <div class="control-group">
+        
+        <label class="control-label signup-label" id="last_name">Last Name</label>
+        <div class="controls ">
+        <input type="text" name="last_name" id="id_last_name" />
+          <span class="help-block"></span>
+        </div>
+      </div>
+      
+      <div class="control-group">
+        
+        <label  class="control-label signup-label" id="email">Email</label>
+        <div class="controls ">
+        <input type="text" name="email" id="id_email" />
+          <span class="help-block"></span>
+        </div>
+      </div>
+      
+      <div class="control-group">
+        
+        <label class="control-label signup-label" id="password_again">Account type</label>
+        <div class="controls ">
+        <input style="margin-top: -3px;" type="radio" name="account_type" value="staff" checked> Staff<br>
+        <input style="margin-top: -3px;" type="radio" name="account_type" value="superuser"> Super User<br>
+          <span class="help-block"></span>
+        </div>
+      </div>
+    
+      <div class="control-group">
+        
+        <label class="control-label signup-label" id="password">Password</label>
+        <div class="controls ">
+        <input type="password" name="password" id="id_password" />
+          <span class="help-block" style="padding-left:25px;">The user can always change their password after logging in.</span>
+        </div>
+      </div>
+    
+      <div class="control-group">
+        
+        <label class="control-label signup-label" id="password_again">Password (again)</label>
+        <div class="controls ">
+        <input type="password" name="password_again" id="id_password_again" />
+          <span class="help-block"></span>
+        </div>
+      </div>
+      
+    
+  </div>
+  <br />
+  <input type="submit" style="margin-left:190px" class="btn btn-primary" value="Create" />
+
+  </form>
+  </div>
+    
+{% endblock %}
+
+{% block super_js %}
+<script type="text/javascript" src="/static/jquery-validation-1.9.0/jquery.validate.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#sellForm").validate({
+      rules: {
+        email: {
+          required: true,
+          email: true,
+        },
+        username: {
+          required: true,
+          maxlength: 30
+        },
+        first_name: {
+          required: true,
+          maxlength: 30
+        },
+        last_name: {
+          required: true,
+          maxlength: 30
+        },
+        password: {
+          required: true,
+          minlength: 6,
+          maxlength: 22,
+        },
+        password_again: {
+          required: true,
+          equalTo: "#id_password"
+        },
+        account_type {
+          required: true,
+        }
+      } 
+    });
+    
+
+});
+</script>
+
+{% endblock %}

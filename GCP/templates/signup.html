@@ -27,7 +27,7 @@ label.error {
     {% for field in form %}
       <div class="control-group">
         {{ field.errors }}
-        <label for="name" class="control-label signup-label" id="{{field.html_name}}">{{ field.label }}</label>
+        <label class="control-label signup-label" id="{{field.html_name}}">{{ field.label }}</label>
         <div class="controls ">
         {{ field }}
           <span class="help-block">{{ field.help_text }}</span>
@@ -55,12 +55,18 @@ $(document).ready(function(){
         },
         group_name: {
           required: true,
+          maxlength: 70
+        },
+        group_description: {
+          required: true,
         },
         username: {
           required: true,
+          maxlength: 30
         },
         officer_name: {
           required: true,
+          maxlength: 50
         },
         academic_start_year: {
           required: true,
@@ -74,6 +80,7 @@ $(document).ready(function(){
           maxlength: 22,
         },
         password_again: {
+          required: true,
           equalTo: "#id_password"
         },
       } 

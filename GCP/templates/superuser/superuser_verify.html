@@ -10,12 +10,13 @@
                 <caption><h2>Account Verification Request</h2></caption>
                 <thead>
                   <tr>
-                    <th> Action </th>
+                    <th style="width:70px;"> Action </th>
                     <th> Username </th>
                     <th> Group Name </th>
                     <th> Email</th>
                     <th> Officer Name</th>
-                    <th> Academic Start Year</th>
+                    <th> Start Year</th>
+                    <th style="width: 140px;"> Group Description </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -29,8 +30,23 @@
                     <td> {{user.get_profile.group_name}}</td>
                     <td> {{user.email}}</td>
                     <td> {{user.get_profile.officer_name}}</td>
-                    <td> {{user.get_profile.academic_start_year}} </td>
+                    <td> {{user.get_profile.academic_start_year}}</td>
+                    <td> <a href="#modal-{{user.id}}" class="btn btn-info" data-toggle="modal">View Description</a></td>
+ 
                   </tr>
+                  
+                    <div class="modal hide fade" id="modal-{{user.id}}">
+                        <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon icon-remove"></i></button>
+                        <h2 id="modal-{{user.id}}-label">Description</h2>
+                        </div>
+                        <div class="modal-body">
+                        <textarea rows="14" class="readonly modal-textarea" readonly="readonly">{{ user.get_profile.group_description }}</textarea>
+                        </div>
+                        <div class="modal-footer">
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                        </div>
+                    </div>
                 {% endfor %}
                 </tbody>
             </table>
@@ -46,6 +62,7 @@
                         <th> Email</th>
                         <th> Officer Name</th>
                         <th> Academic Start Year</th>
+                        <th style="width: 140px;"> Group Description </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -60,7 +77,21 @@
                             <td> {{profile.user.email}}</td>
                             <td> {{profile.user.get_profile.officer_name}}</td>
                             <td> {{profile.user.get_profile.academic_start_year}} </td>
+                            <td> <a href="#modal-{{user.id}}" class="btn btn-info" data-toggle="modal">View Description</a></td>
                         </tr>
+                        
+                        <div class="modal hide fade" id="modal-{{user.id}}">
+                            <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon icon-remove"></i></button>
+                            <h2 id="modal-{{user.id}}-label">Description</h2>
+                            </div>
+                            <div class="modal-body">
+                            <textarea rows="14" class="readonly modal-textarea" readonly="readonly">{{ profile.group_description }}</textarea>
+                            </div>
+                            <div class="modal-footer">
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                            </div>
+                        </div>
                     {% endfor %}
                     </tbody>
                 </table>

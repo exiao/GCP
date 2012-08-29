@@ -9,12 +9,18 @@
     <br>
         <table class="table">
           <tbody>
-            <tr><td><div class="horiz-title"> Username </div> <div class="horiz-content">{{user.username}}</div>  </td></tr>
-            <tr><td><div class="horiz-title"> Group Name </div> <div class="horiz-content">{{user.get_profile.group_name}} <a href="{% url account_edit %}?field=group_name" class="icon-pencil"></a></div>  </td></tr>
-            <tr><td><div class="horiz-title"> Email </div> <div class="horiz-content">{{user.email}} <a href="{% url account_edit %}?field=email" class="icon-pencil"></a></div>  </td></tr>
-            <tr><td><div class="horiz-title"> Officer Name </div> <div class="horiz-content">{{user.get_profile.officer_name}} <a href="{% url account_edit %}?field=officer_name" class="icon-pencil"></a></div>  </td></tr>
-            <tr><td><div class="horiz-title"> Academic Start Year </div> <div class="horiz-content">{{user.get_profile.academic_start_year}} <a href="{% url account_edit %}?field=academic_start_year" class="icon-pencil"></a></div>  </td></tr>
-            <tr><td><div class="horiz-title"> Password </div> <div class="horiz-content">********* <a href="{% url account_edit %}?field=password" class="icon-pencil"></a></div>  </td></tr>
+            <tr><td><div class="horiz-title"><i class="icon-pencil" style="visibility:hidden;"></i> Username </div> <div class="horiz-content">{{user.username}}</div>  </td></tr>
+            <tr><td><div class="horiz-title"><a href="{% url account_edit %}?field=email" class="icon-pencil"></a> Email </div> <div class="horiz-content">{{user.email}} </div>  </td></tr>
+            {% if user.is_staff %}
+            <tr><td><div class="horiz-title"><a href="{% url account_edit %}?field=first_name" class="icon-pencil"></a> First Name </div> <div class="horiz-content">{{user.first_name}} </div>  </td></tr>
+            <tr><td><div class="horiz-title"><a href="{% url account_edit %}?field=last_name" class="icon-pencil"></a> Last Name </div> <div class="horiz-content">{{user.last_name}} </div>  </td></tr>
+            {% else %}
+            <tr><td><div class="horiz-title"><a href="{% url account_edit %}?field=group_name" class="icon-pencil"></a> Group Name </div> <div class="horiz-content">{{user.get_profile.group_name}} </div>  </td></tr>
+            <tr><td><div class="horiz-title"><a href="{% url account_edit %}?field=group_description" class="icon-pencil"></a> Group Description </div> <div class="horiz-content"><textarea style="width:70%" rows="9" class="readonly" readonly="readonly">{{user.get_profile.group_description}}</textarea> </div>  </td></tr>
+            <tr><td><div class="horiz-title"><a href="{% url account_edit %}?field=officer_name" class="icon-pencil"></a> Officer Name </div> <div class="horiz-content">{{user.get_profile.officer_name}} </div>  </td></tr>
+            <tr><td><div class="horiz-title"><a href="{% url account_edit %}?field=academic_start_year" class="icon-pencil"></a> Academic Start Year </div> <div class="horiz-content">{{user.get_profile.academic_start_year}} </div>  </td></tr>
+            {% endif %}
+            <tr><td><div class="horiz-title"><a href="{% url account_edit %}?field=password" class="icon-pencil"></a> Password </div> <div class="horiz-content">********* </div>  </td></tr>
           </tbody>
         </table>
 
