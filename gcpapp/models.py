@@ -99,6 +99,7 @@ class Checklist(models.Model):
     user = models.ForeignKey(User)
     questions = models.ManyToManyField("Question")
     academic_year = models.ForeignKey("AcademicYear")
+    timestamp = models.DateTimeField(auto_now_add=True,null=True)
     def __unicode__(self):
         return str(self.user) + "-" + str(self.academic_year.year)
 

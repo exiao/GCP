@@ -38,10 +38,10 @@
                     <div class="modal hide fade" id="modal-{{user.id}}">
                         <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon icon-remove"></i></button>
-                        <h2 id="modal-{{user.id}}-label">Description</h2>
+                        <h2 id="modal-{{user.id}}-label">{{user.get_profile.group_name}} </h2>
                         </div>
                         <div class="modal-body">
-                        <textarea rows="14" class="readonly modal-textarea" readonly="readonly">{{ user.get_profile.group_description }}</textarea>
+                        <p style="white-space: pre-wrap">{{ user.get_profile.group_description }}</p>
                         </div>
                         <div class="modal-footer">
                         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -56,12 +56,12 @@
                     <caption><h2>Account Deletion Request</h2></caption>
                     <thead>
                     <tr>
-                        <th> Action </th>
+                        <th style="width:70px;"> Action </th>
                         <th> Username </th>
-                        <th> Group Name </th>
+                        <th> Group Name / Staff Name</th>
                         <th> Email</th>
                         <th> Officer Name</th>
-                        <th> Academic Start Year</th>
+                        <th> Start Year</th>
                         <th style="width: 140px;"> Group Description </th>
                     </tr>
                     </thead>
@@ -73,20 +73,38 @@
                                 <input style="margin-top: -3px;" type="radio" name="{{ profile.user.id }}" value="verify"> Keep
                             </td>
                             <td> {{profile.user.username}}</td>
-                            <td> {{profile.user.get_profile.group_name}}</td>
+                            <td> 
+                                {% if profile.user.is_staff %}
+                                {{ profile.user.first_name }} {{ profile.user.last_name }}
+                                {% else %}
+                                {{profile.user.get_profile.group_name}}
+                                {% endif %}
+                            </td>
                             <td> {{profile.user.email}}</td>
-                            <td> {{profile.user.get_profile.officer_name}}</td>
-                            <td> {{profile.user.get_profile.academic_start_year}} </td>
+                            <td> 
+                                {% if profile.user.is_staff %}
+                                THIS IS A STAFF ACCOUNT
+                                {% else %}
+                                {{profile.user.get_profile.officer_name}}
+                                {% endif %}
+                            </td>
+                            <td> 
+                                {% if profile.user.is_staff %}
+                                N/A
+                                {% else %}
+                                {{profile.user.get_profile.academic_start_year}} 
+                                {% endif %}
+                            </td>
                             <td> <a href="#modal-{{user.id}}" class="btn btn-info" data-toggle="modal">View Description</a></td>
                         </tr>
                         
                         <div class="modal hide fade" id="modal-{{user.id}}">
                             <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon icon-remove"></i></button>
-                            <h2 id="modal-{{user.id}}-label">Description</h2>
+                            <h2 id="modal-{{user.id}}-label">{{user.get_profile.group_name}}</h2>
                             </div>
                             <div class="modal-body">
-                            <textarea rows="14" class="readonly modal-textarea" readonly="readonly">{{ profile.group_description }}</textarea>
+                            <p style="white-space: pre-wrap">{{ profile.group_description }}</p>
                             </div>
                             <div class="modal-footer">
                             <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>

@@ -7,22 +7,24 @@
 
     <div class="span12">
             <legend class="header"><h2> Green Groups </h2></legend>
-            <table class="table">
-            <thead>
-              <tr>
-                <th> Group Names </th>
-              </tr>
-            </thead>
-            <tbody>
+            
+            <div class="accordion" id="accordion2">
                 {% for user in verified_users %}
-                  <tr>
-                    <td>
-                    {{ user.get_profile.group_name }}
-                    </td>
-                  </tr>
+                <div class="accordion-group">
+                  <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse-{{user.id}}">
+                      {{ user.get_profile.group_name }}
+                    </a>
+                  </div>
+                  <div id="collapse-{{ user.id}}" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                       <p style="white-space: pre-wrap">{{ user.get_profile.group_description }}</p>
+                    </div>
+                  </div>
+                </div>
                 {% endfor %}
-            </tbody>
-            </table>
+                
+            </div>
     </div>
 
 {% endblock %}

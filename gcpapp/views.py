@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail      
 from settings import EMAIL_HOST_USER
 from django.db.models import Max, Sum
+import datetime
 
 def home(request):
     return render_to_response('home.html', context_instance=RequestContext(request))
@@ -531,6 +532,8 @@ def checklist_work(request,year,checklist_user):
         if request.user.is_staff:
             return redirect('/staff/%d/checklist/%d/?message=Checklist updated!' % ( int(checklist_user.id), int(year)) )
         else:
+            checklist.timestamp = datetime.datetime.now()
+            checklist.save()
             return redirect('/account/checklist/%d/?message=Checklist updated!' % int(year))
 
 @login_required
