@@ -45,6 +45,9 @@
                     {% if user.is_superuser %}
                         <li id="superuser-nav"><a href="{% url superuser %}"> Admin </a></li>
                     {% endif %}
+                    {% if user.is_staff %}
+                        <li id="staff-nav"><a href="{% url staff %}"> Staff </a></li>
+                    {% endif %}
                     {% if user.is_authenticated %}
                         <li id="account-nav"><a href="{% url account_profile %}"><i class="icon-cog"></i> Account</a></li>
                         <a href="/logout/" class="btn btn-success" style="margin-left: 5px;"> Log out </a>

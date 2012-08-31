@@ -25,6 +25,12 @@ urlpatterns = patterns('gcpapp.views',
     url(r'^superuser/staff/(?P<user_id>\d+)/$', 'superuser_staff_user', name='superuser_staff_user'),
     url(r'^superuser/staff/create/$', 'superuser_staff_create', name='superuser_staff_create'),
     
+    #STAFF SECTION
+    url(r'^staff/$', 'staff', name='staff'),
+    url(r'^staff/(?P<group_id>\d+)/files/(?P<folder_id>\d+)/$', 'staff_group_files', name='staff_group_files'), 
+    url(r'^staff/(?P<group_id>\d+)/checklist/$', 'staff_checklist_redirect', name='staff_checklist_redirect'),
+    url(r'^staff/(?P<group_id>\d+)/checklist/(?P<year>\d+)/$', 'staff_checklist'),
+    
     #ACCOUNT SECTION
     url(r'^account/profile/$', 'account_profile', name='account_profile'),
     url(r'^account/profile/edit/$', 'account_edit', name='account_edit'),

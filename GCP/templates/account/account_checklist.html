@@ -3,28 +3,44 @@
 {% block title %} Checklist {% endblock %}
 
 
+    {% block pills %}
+        {% if user.is_staff %}
+        <ul class="nav nav-pills" style="margin-bottom: 0px">
+            <li id="pill-my-groups">
+            <a href="{% url staff %}">My Groups</a>
+            </li>
+            <span style="padding-top:5px" class="pull-right"> 
+                {{ checklist_user.get_profile.group_name }}: <a href="{% url staff_group_files group_id=checklist_user.id folder_id=checklist_user.get_profile.base_folder.id %}">Files</a> <span class="divider">|</span> Checklist
+            </span>
+        </ul>
+        {% else %}
+        <ul class="nav nav-pills" style="margin-bottom: 0px">
+            <li id="pill-profile"><a href="{% url account_profile %}">General</a></li>
+            <li id="pill-files"><a href="/account/files/{{ user.get_profile.base_folder.id }}/">Files</a></li>
+            <li id="pill-checklist"><a href="{% url account_checklist_redirect %}">Checklist</a></li>
+        </ul>
+        {% endif %}
+    {%endblock%}
+
 {% block account_content %}
     <ul class="breadcrumb">
         {% for a_year in all_years %}
             <li><a href="../{{a_year.year}}"> {{ a_year.year }}</a><span class="divider">/</span></li>
         {% endfor %}
-
-        {% if most %}
-            {% for folder in most %}
-                <li><a href="/account/files/{{folder.id}}"> {{folder.name }}</a><span class="divider">/</span></li>
-            {% endfor %}
-            <li class="active"> {{ last.name }} </li>
-        {% else %}
-            <li class="active">{{last.name}}</li>
-        {% endif %}
     </ul>
 
     {% if message %}
         <p style="color:red">{{ message }}</p>
     {% endif %}
-
+    
+    {% if user.is_staff %}
+    <legend><h2> {{ checklist_user.get_profile.group_name }} - {{ year }} Checklist </h2></legend>
+    {% else %}
     <legend><h2>Your {{ year }} Checklist</h2></legend>
-
+    {% endif %}
+    
+    <h5>Overall Score: {{ curr_points }}/{{max_points}}</h5>
+    
     <form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
     {% for question in questions %}
     <div class="accordion" id="accordion-{{ question.id }}">
@@ -48,31 +64,51 @@
                             Points: <b>{{ question.point_value }}</b> <br>
                             Approved:
                             {% if question.is_approved %}
-                            Yes
+                                {% if user.is_staff %}
+                                <select style="width:100px" name="{{question.id}}_is_approved">
+                                    <option value="yes" selected> Yes </option>
+                                    <option value="no"> No </option>
+                                </select>
+                                {% else %}
+                                Yes
+                                {%endif %}
                             {% else %}
-                            No
+                                {% if user.is_staff %}
+                                <select style="width:100px" name="{{question.id}}_is_approved">
+                                    <option value="yes" > Yes </option>
+                                    <option value="no" selected> No </option>
+                                </select>
+                                {% else %}
+                                No
+                                {%endif %}
                             {% endif %}
                         </p>
 
                         <label>Description/Documentation</label>
-                        <textarea name="{{ question.id }}_description" rows="5" style="min-width: 90%; max-width: 100%">{{ question.description }}</textarea>
+                        <textarea name="{{ question.id }}_description" rows="5" style="min-width: 90%; max-width: 100%" {% if user.is_staff %}class="readonly" readonly{% endif %}>{{ question.description }}</textarea>
 
                         <br><br>
-                        {% if question.files.all|length > 0  %}
+                        
+                        {% comment %}{% if question.files.all|length > 0  %}{% endcomment %}
                             <label>Current Documents/Photos</label>
                             {% for file in question.files.all %}
                                 <a href="{{ file.file.url }}">{{ file.name }} </a>
+                                {% if checklist_user == user or user.is_superuser %}
                                 <input style="margin-left:10px; margin-top:-3px;" type="checkbox" name="file_delete" value="{{ file.id }}" /> Delete
+                                {% endif %}
                                 <br>
                             {% endfor %}
                             <br>
-                        {% endif %}
+                        {% comment %}{% endif %}{% endcomment %}
+                        
+                        {% if user == checklist_user %}
                         <label style="padding-bottom: 0px;">Upload Documents/Photos</label>
                         <div id="upload-files-{{ question.id }}">
                             <input name="{{ question.id }}_file" type="file">
                         </div>
                         <br>
                         <a href="#" onclick="return false;" class="upload-more" value="{{ question.id }}"> <i class="icon-plus"></i> click here to upload more</a>
+                        {% endif %}
                     </p>
                 </div>
             </div>
@@ -86,15 +122,20 @@
 
 
 {% block super_js %}
-    <script type="text/javascript">
-        $(document).ready( function() {
-            $("#pill-checklist").addClass("active");
-            $(".upload-more").click(function(){
-                var question_id = $(this).attr("value");
-                var new_upload_html = '<br><input name="' + question_id + '_file" type="file">'
-                $("#upload-files-"+question_id).append(new_upload_html)
-            })
+<script type="text/javascript">
+    $(document).ready( function() {
+        {% if user.is_staff %}
+        $("#staff-nav").addClass("active");
+        $("#account-nav").removeClass("active");
+        {% endif %}
+    
+        $("#pill-checklist").addClass("active");
+        $(".upload-more").click(function(){
+            var question_id = $(this).attr("value");
+            var new_upload_html = '<br><input name="' + question_id + '_file" type="file">'
+            $("#upload-files-"+question_id).append(new_upload_html)
         })
-    </script>
+    })
+</script>
 
 {% endblock %}

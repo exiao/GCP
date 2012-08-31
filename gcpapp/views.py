@@ -214,7 +214,7 @@ def superuser_staff(request):
         if request.GET.__contains__('message'):
             data['message'] = request.GET['message']
             
-        data['staff_members'] = User.objects.filter(is_staff=True)
+        data['staff_members'] = User.objects.filter(is_staff=True,is_superuser=False)
         return render_to_response('superuser/superuser_staff.html',data, context_instance=RequestContext(request))
         
 @login_required
@@ -285,6 +285,44 @@ def superuser_staff_create(request):
         
         return redirect('/superuser/staff/?message=Staff member created!')
         
+@login_required
+def staff(request):
+    data = {}
+    user = request.user
+    profile = user.get_profile()
+    if user.is_staff == False:
+        return redirect('/')
+    if request.method=="GET":
+        if user.is_superuser:
+            my_groups = User.objects.filter(is_staff=False,is_superuser=False)
+        else:
+            my_groups = profile.my_groups.all()
+        data['my_groups'] = my_groups
+        return render_to_response('staff/staff_my_groups.html',data,context_instance=RequestContext(request))
+
+@login_required
+def staff_group_files(request,group_id,folder_id):
+    data = {}
+    user = request.user
+    profile = user.get_profile()
+    if user.is_staff == False:
+        return redirect('/')
+    group = User.objects.get(id=group_id)
+    return account_files(request,folder_id)
+    
+@login_required
+def staff_checklist_redirect(request,group_id):
+    data = {}
+    max_year = AcademicYear.objects.all().aggregate(Max('year'))['year__max']
+    if max_year is None:
+        return render_to_response('small_message.html', {'title': 'Error','message':'Sorry, no active academic year exists. Please contact an administrator.' }, context_instance=RequestContext(request))
+    return redirect('/staff/%d/checklist/%d' % ( int(group_id),max_year) )
+    
+@login_required
+def staff_checklist(request,group_id,year):
+    checklist_user = User.objects.get(id=group_id)
+    return checklist_work(request,year,checklist_user)
+        
 #unused
 @login_required
 def account_settings(request):
@@ -350,13 +388,13 @@ def account_edit(request):
 def account_files(request,folder_id):
     data = {}
     folder = Folder.objects.get(id=folder_id)
-    if request.user != folder.user:
+    if request.user != folder.user and request.user.is_staff == False:
         return redirect('/account/profile')
     #this happens on file upload
     if request.method == "POST" and request.FILES.__contains__('file'):
         file = request.FILES['file']
-        obj = File.objects.create(file=file,name=str(file),user=request.user)
-        profile = request.user.get_profile()
+        obj = File.objects.create(file=file,name=str(file),user=folder.user)
+        profile = folder.user.get_profile()
         folder.files.add(obj)
         message = 'File uploaded!'
         return redirect('/account/files/%d' % int(folder_id))#%d?message=%s' % (int(folder_id),message))
@@ -364,7 +402,7 @@ def account_files(request,folder_id):
     #this happens on folder creation
     elif request.method == "POST" and request.POST.__contains__('folder'):
         folder_name = request.POST['folder']
-        new_folder = Folder.objects.create(name=folder_name,user=request.user,parent=folder)
+        new_folder = Folder.objects.create(name=folder_name,user=folder.user,parent=folder)
         folder.sub_folders.add(new_folder)
         folder.save()
         message = 'Folder created!'
@@ -394,6 +432,7 @@ def account_files(request,folder_id):
 
         data['folders'] = folders
         data['files'] = files
+        data['folder_owner'] = folder.user
         return render_to_response('account/account_files.html',data, context_instance=RequestContext(request))
         
 @login_required
@@ -428,17 +467,21 @@ def account_checklist_redirect(request):
 
 @login_required
 def account_checklist(request,year):
+    return checklist_work(request,year,request.user)
+    
+#this exists because 2 things will refer to the same view (account_checklist and staff_checklist)
+def checklist_work(request,year,checklist_user):
     data = {}
     data['year'] = year
     academic_year = AcademicYear.objects.get(year=year)
     if request.method == "GET":
         if request.GET.__contains__('message'):
             data['message'] = request.GET['message']
-        checklist, created = Checklist.objects.get_or_create(user=request.user, academic_year=academic_year)
+        checklist, created = Checklist.objects.get_or_create(user=checklist_user, academic_year=academic_year)
 
         for question_base in QuestionBase.objects.all():
             if not checklist.questions.filter(question_base=question_base).exists():
-                question,created = Question.objects.get_or_create(user=request.user,
+                question,created = Question.objects.get_or_create(user=checklist_user,
                     question_base = question_base,
                     question_text = question_base.question_text,
                     point_value = question_base.point_value,
@@ -449,29 +492,46 @@ def account_checklist(request,year):
         data['questions'] = questions
         data['checklist'] = checklist
         data['all_years'] = AcademicYear.objects.all().order_by('year')
+        data['checklist_user'] = checklist.user
+        
+        data['curr_points'] = Question.objects.filter(user=checklist_user,academic_year=academic_year,is_approved=True).aggregate(Sum('point_value'))['point_value__sum']
+        data['max_points'] = Question.objects.filter(user=checklist_user,academic_year=academic_year).aggregate(Sum('point_value'))['point_value__sum']
+        
+        if data['curr_points'] is None:
+            data['curr_points'] = 0
         return render_to_response('account/account_checklist.html',data,context_instance=RequestContext(request))
     else:
-        checklist = Checklist.objects.get(user=request.user, academic_year=academic_year)
+        checklist = Checklist.objects.get(user=checklist_user, academic_year=academic_year)
         for question in checklist.questions.all():
             description_key = str(question.id) + "_description"
             if request.POST.__contains__(description_key):
                 description = request.POST[description_key]
                 question.description = description
+            
+            approved_key = str(question.id)+"_is_approved"
+            if request.POST.__contains__(approved_key):
+                is_approved = request.POST[approved_key]
+                if is_approved == "yes":
+                    question.is_approved = True
+                else:
+                    question.is_approved = False
 
             files_key = str(question.id) + "_file"
             files_list = request.FILES.getlist(files_key)
 
             for file in files_list:
-                obj = File.objects.create(file=file,name=str(file),user=request.user)
+                obj = File.objects.create(file=file,name=str(file),user=checklist_user)
                 question.files.add(obj)
 
             question.save()
 
         for file_id in request.POST.getlist("file_delete"):
             File.objects.get(id=file_id).delete()
-
-        return redirect('/account/checklist/%d/?message=Checklist updated!' % int(year))
-
+        
+        if request.user.is_staff:
+            return redirect('/staff/%d/checklist/%d/?message=Checklist updated!' % ( int(checklist_user.id), int(year)) )
+        else:
+            return redirect('/account/checklist/%d/?message=Checklist updated!' % int(year))
 
 @login_required
 def ajax_delete_folder(request):

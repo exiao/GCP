@@ -1,11 +1,37 @@
 {% extends "account/account.html" %}
     {% block title %}Files{% endblock %}
+    
 
+    {% block pills %}
+    {% if user.is_staff %}
+    <ul class="nav nav-pills" style="margin-bottom: 0px">
+        <li id="pill-my-groups">
+        <a href="{% url staff %}">My Groups</a>  
+        </li>
+        <span style="padding-top:5px" class="pull-right"> 
+            {{ folder_owner.get_profile.group_name }}: Files <span class="divider">|</span> <a href="{% url staff_checklist_redirect folder_owner.id %}">Checklist</a>
+        </span>
+    </ul>
+    <h2>{{ folder_owner.get_profile.group_name }} - Files </h2>
+    {% else %}
+    <ul class="nav nav-pills" style="margin-bottom: 0px">
+        <li id="pill-profile"><a href="{% url account_profile %}">General</a></li>
+        <li id="pill-files"><a href="/account/files/{{ user.get_profile.base_folder.id }}/">Files</a></li>
+        <li id="pill-checklist"><a href="{% url account_checklist_redirect %}">Checklist</a></li>
+    </ul>
+    {%endif%}
+    {%endblock%}
+
+    
     {% block account_content %}
         <ul class="breadcrumb">
             {% if most %}
                 {% for folder in most %}
+                    {% if user.is_staff %}
+                    <li><a href="/staff/{{folder.user.id}}/files/{{folder.id}}"> {{folder.name }}</a><span class="divider">/</span></li>
+                    {% else %}
                     <li><a href="/account/files/{{folder.id}}"> {{folder.name }}</a><span class="divider">/</span></li>
+                    {% endif %}
                 {% endfor %}
                 <li class="active"> {{ last.name }} </li>
             {% else %}
@@ -23,16 +49,24 @@
               <th> Name </th>
               <th> Type </th>
               <th> Creation Date </th>
+              {% if user.id == folder_owner.id or user.is_superuser %}
               <th style="width: 50px; text-align:center"> Delete </th>
+              {% endif %}
             </tr>
           </thead>
           <tbody>
             {% for folder in folders %}
             <tr class="folder" >
+              {% if user.is_staff %}
+              <td><a href="/staff/{{folder.user.id}}/files/{{folder.id}}"><i class="icon-folder-open"></i> {{ folder.name }} </a></td>
+              {% else %}
               <td><a href="/account/files/{{ folder.id }}"><i class="icon-folder-open"></i> {{ folder.name }} </a></td>
+              {% endif %}
               <td> Folder </td>
               <td> {{folder.timestamp}} </td>
+              {% if user.id == folder_owner.id or user.is_superuser %}
               <td style="width: 50px; text-align:center"> <i class="icon-trash folder-delete" value="{{folder.id}}"></i> </td>
+              {% endif %}
             </tr>
             {% endfor %} 
           
@@ -41,11 +75,15 @@
               <td><a href="{{ file.file.url }}"><i class="icon-file"></i> {{ file.name }} </a></td>
               <td> File </td>
               <td> {{file.timestamp}} </td>
+              {% if user.id == folder_owner.id or user.is_superuser %}
               <td style="width: 50px; text-align:center"> <i class="icon-trash file-delete" value="{{file.id}}"></i> </td>
+              {% endif %}
             </tr>
             {% endfor %} 
           </tbody>
         </table>
+        
+        {% if user.id == folder_owner.id %}
         <hr>
         <form action="." id="uploadForm" method="post" onsubmit="return validateUpload();" class="form-horizontal" enctype="multipart/form-data">{% csrf_token %}
             Upload File: <input id="file-input" name="file" type="file"> <input style="" class="btn btn-primary" type="submit" value="Upload">
@@ -56,6 +94,9 @@
             New Folder: <input id="folder-input" name="folder" type="text" placeholder="Folder Name"> <input style=" margin-left:10px" class="btn btn-primary" type="submit" value="Create">
             <label id="folder-error" class="error" style="display:none"> Please specify a folder name </label>
         </form>
+        {% endif %}
+        
+        
     {% endblock %}
 
 
@@ -65,7 +106,11 @@
   var csrf_token = "{{ csrf_token }}"
 
   $(document).ready( function() {
-    $("#pill-files").addClass("active")
+    $("#pill-files").addClass("active");
+    {% if user.is_staff %}
+        $("#staff-nav").addClass("active");
+        $("#account-nav").removeClass("active");
+    {% endif %}
   })
   
   function validateUpload() {
