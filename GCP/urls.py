@@ -24,6 +24,7 @@ urlpatterns = patterns('gcpapp.views',
     url(r'^superuser/staff/$', 'superuser_staff', name='superuser_staff'),
     url(r'^superuser/staff/(?P<user_id>\d+)/$', 'superuser_staff_user', name='superuser_staff_user'),
     url(r'^superuser/staff/create/$', 'superuser_staff_create', name='superuser_staff_create'),
+    url(r'^superuser/all_accounts/$', 'superuser_all_accounts', name='superuser_all_accounts'),
     
     #STAFF SECTION
     url(r'^staff/$', 'staff', name='staff'),

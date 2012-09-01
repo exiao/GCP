@@ -24,7 +24,7 @@ padding-right: 20px;
 */
 
 .navbar-inner {
-    min-width: 920px;
+    min-width: 940px;
 
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
@@ -47,6 +47,7 @@ padding-right: 20px;
 
 .navbar .brand {
     color: #858585;
+    padding: 10px 12px;
 }
 
 
@@ -56,6 +57,7 @@ padding-right: 20px;
     color: #858585;
     text-decoration: none;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0);
+    padding: 10px 9.3px;
 }
 
 .navbar .nav > li > a:hover {
@@ -125,6 +127,7 @@ html {
     padding-top: 20px;
     height: 8%;
     width: 100%;
+    min-width: 982px;
 }
 
 /* unused
@@ -219,3 +222,4 @@ textarea.readonly {
 .pad-radio-top {
     margin-top: -3px;
 }
+

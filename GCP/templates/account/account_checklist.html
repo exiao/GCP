@@ -42,6 +42,7 @@
     <i> Last Updated: {{ checklist.timestamp }} </i>
     
     <h5>Overall Score: {{ curr_points }}/{{max_points}}</h5>
+    <br>
     
     <form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
     {% for question in questions %}
@@ -62,41 +63,44 @@
             <div id="collapse-{{ question.id }}" class="accordion-body collapse">
                 <div class="accordion-inner">
                     <p>
-                        <p>
-                            <b>Points</b>: {{ question.point_value }} <br>
-                            <b>Approved</b>:
-                            {% if question.is_approved %}
-                                {% if user.is_staff %}
-                                <select style="width:100px" name="{{question.id}}_is_approved">
-                                    <option value="yes" selected> Yes </option>
-                                    <option value="no"> No </option>
-                                </select>
-                                {% else %}
-                                Yes
-                                {%endif %}
-                            {% else %}
-                                {% if user.is_staff %}
-                                <select style="width:100px" name="{{question.id}}_is_approved">
-                                    <option value="yes" > Yes </option>
-                                    <option value="no" selected> No </option>
-                                </select>
-                                {% else %}
-                                No
-                                {%endif %}
-                            {% endif %}
-                        </p>
 
+                        <p><b>Points</b>: {{ question.point_value }} <br></p>
+                        <p>
+                        
+                        <b>Approved</b>:
+                        {% if question.is_approved %}
+                            {% if user.is_staff %}
+                            <select style="width:100px" name="{{question.id}}_is_approved">
+                                <option value="yes" selected> Yes </option>
+                                <option value="no"> No </option>
+                            </select>
+                            {% else %}
+                            Yes
+                            {%endif %}
+                        {% else %}
+                            {% if user.is_staff %}
+                            <select style="width:100px" name="{{question.id}}_is_approved">
+                                <option value="yes" > Yes </option>
+                                <option value="no" selected> No </option>
+                            </select>
+                            {% else %}
+                            No
+                            {%endif %}
+                        {% endif %}
+                        </p>
+                        
+                        <p>
                         <label><b>Description/Documentation</b></label>
                         {% comment %}
-                        UNCOMMENT IF YOU WNT TEXTAREA
-                        <textarea name="{{ question.id }}_description" rows="5" style="min-width: 90%; max-width: 100%" {% if user.is_staff %}class="readonly" readonly{% endif %}>{{ question.description }}</textarea>
+                        UNCOMMENT IF YOU WANT TEXTAREA
+                        <textarea name="{{ question.id }}_description" rows="5" style="min-width: 90%; max-width: 100%" {% if user.is_staff %}class="readonly" readonly{% endif %}>{{ question.description }}</textarea><br>
                         {%endcomment%}
                         {% if user.is_staff %}
-                        <p style="white-space: pre-wrap"> {{ question.description }} </p>
+                        <p style="white-space: pre-wrap">{{ question.description }}</p>
                         {% else %}
                         <textarea name="{{ question.id }}_description" rows="5" style="min-width: 90%; max-width: 100%" >{{ question.description }}</textarea>
-                        <br><br>
                         {% endif %}
+                        </p>
                         
                         
                         {% comment %}{% if question.files.all|length > 0  %}{% endcomment %}
@@ -112,13 +116,25 @@
                         {% comment %}{% endif %}{% endcomment %}
                         
                         {% if user == checklist_user %}
+                        <p>
                         <label style="padding-bottom: 0px;"><b>Upload Documents/Photos</b></label>
                         <div id="upload-files-{{ question.id }}">
                             <input name="{{ question.id }}_file" type="file">
                         </div>
-                        <br>
                         <a href="#" onclick="return false;" class="upload-more" value="{{ question.id }}"> <i class="icon-plus"></i> click here to upload more</a>
+                        </p>
                         {% endif %}
+                        
+                        {% if user.is_staff %}
+                        <hr>
+                        <label ><b style="color:#b30000">Admin Comment</b></label>
+                        <textarea name="{{ question.id }}_admin_comment" rows="5" style="min-width: 90%; max-width: 100%" >{{ question.admin_comment }}</textarea><br>
+                        {% else %}{% if question.admin_comment != "" %}
+                        <hr>
+                        <label ><b style="color:#b30000">Admin Comment</b></label>
+                        <p style="white-space: pre-wrap; color:#b30000">{{ question.admin_comment }}</p>
+                        {% endif %}{% endif %}
+                        
                     </p>
                 </div>
             </div>

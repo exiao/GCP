@@ -1,0 +1,110 @@
+{% extends "superuser/superuser.html" %}
+
+{% block title %} Admin - All Accounts{% endblock %}
+
+{% block super_content %}
+    {% if message %}
+    <p style="color:red">{{ message }}</p>
+    {% endif %}
+    
+    <form id="delete_form" action="." onsubmit="return confirmMessage()" method="post">
+    {% csrf_token %}
+    <table class="table table-bordered">
+                <caption><h2>All Groups</h2></caption>
+                <thead>
+                  <tr>
+                    <th style="width: 70px;"> Delete </th>
+                    <th> Username </th>
+                    <th> Group Name </th>
+                    <th> Email</th>
+                    <th> Officer Name</th>
+                    <th> Start Year</th>
+                    <th style="width: 140px;"> Group Description </th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for user in all_groups %}
+                  <tr>
+                    <td><input style="margin-top:0px;" type="checkbox" name="Delete" value="{{ user.id }}"> Delete</td>
+                    <td> {{user.username}}</td>
+                    <td> {{user.get_profile.group_name}}</td>
+                    <td> {{user.email}}</td>
+                    <td> {{user.get_profile.officer_name}}</td>
+                    <td> {{user.get_profile.academic_start_year}}</td>
+                    <td> <a href="#modal-{{user.id}}" class="btn btn-info" data-toggle="modal">View Description</a></td>
+ 
+                  </tr>
+                  
+                    <div class="modal hide fade" id="modal-{{user.id}}">
+                        <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon icon-remove"></i></button>
+                        <h2 id="modal-{{user.id}}-label">{{user.get_profile.group_name}} </h2>
+                        </div>
+                        <div class="modal-body">
+                        <p style="white-space: pre-wrap">{{ user.get_profile.group_description }}</p>
+                        </div>
+                        <div class="modal-footer">
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                        </div>
+                    </div>
+                {% endfor %}
+                </tbody>
+            </table>
+    
+    <table class="table table-bordered">
+        <caption><h2>All Staff and Super Users </h2></caption>
+        <thead>
+            <tr>
+                <th style="width: 70px;"> Delete </th>
+                <th> Username </th>
+                <th> First Name </th>
+                <th> Last Name </th>
+                <th> Email</th>
+                <th> Account Type </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in all_staff %}
+            <tr>
+                <td><input style="margin-top:0px;" type="checkbox" name="Delete" value="{{ entry.id }}"> Delete</td>
+                <td> {{ entry.username }} </td>
+                <td> {{ entry.first_name }} </td>
+                <td> {{ entry.last_name }} </td>
+                <td> {{ entry.email }} </td>
+                <td>
+                {% if entry.is_superuser %} 
+                Super User
+                {% else %}
+                Staff
+                {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <input type="submit" value="Delete" class="btn btn-danger" />
+    
+    </form>
+{% endblock %}
+
+{% block super_js %}
+    <script type="text/javascript">
+        $(document).ready( function() {
+            $("#pill-all-accounts").addClass("active");
+            
+        })
+        
+        function confirmMessage() {
+            var n = $("#delete_form input:checked").length;
+            if (n==0) {
+                alert('You have not selected any accounts');
+                return false;
+            }
+        
+            var bool = confirm('Are you sure you want to delete these accounts? This action is permanent.')
+            return bool;
+        }
+    </script>
+
+{% endblock %}

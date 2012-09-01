@@ -285,6 +285,25 @@ def superuser_staff_create(request):
         new_user.save()
         
         return redirect('/superuser/staff/?message=Staff member created!')
+
+@login_required
+def superuser_all_accounts(request):
+    data = {}
+    if request.user.is_superuser == False:
+        return HttpResponseRedirect('/')
+    if request.method == "GET":
+        all_staff = User.objects.filter(is_active = True,is_staff=True).order_by('-is_superuser')
+        all_groups = User.objects.filter(is_active = True,is_staff=False)
+        data['all_staff'] = all_staff
+        data['all_groups'] = all_groups
+        return render_to_response('superuser/superuser_all_accounts.html',data,context_instance=RequestContext(request))
+    else:
+        delete_ids = request.POST.getlist('Delete')
+        for id in delete_ids:
+            user = User.objects.get(id=id)
+            user.get_profile().delete()
+            user.delete()
+        return redirect('superuser_all_accounts')
         
 @login_required
 def staff(request):
@@ -516,6 +535,11 @@ def checklist_work(request,year,checklist_user):
                     question.is_approved = True
                 else:
                     question.is_approved = False
+                    
+            admin_comment_key = str(question.id)+"_admin_comment"
+            if request.POST.__contains__(admin_comment_key):
+                admin_comment = request.POST[admin_comment_key]
+                question.admin_comment = admin_comment
 
             files_key = str(question.id) + "_file"
             files_list = request.FILES.getlist(files_key)

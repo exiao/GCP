@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="description" content="ASUC Green Certification Program at UC Berkeley." />
+    <meta name="keywords" content="UC Berkeley, UCB, ASUC Green Certification Program, Green Cat" /> 
     {% block top_head %} {% endblock %}
     <title>
         {% block title %}
@@ -43,7 +45,7 @@
                 </ul>
                 <ul class="nav pull-right">
                     {% if user.is_superuser %}
-                        <li id="superuser-nav"><a href="{% url superuser %}"> Admin </a></li>
+                        <li id="superuser-nav"><a href="{% url superuser %}"> Super User </a></li>
                     {% endif %}
                     {% if user.is_staff %}
                         <li id="staff-nav"><a href="{% url staff %}"> Staff </a></li>

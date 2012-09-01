@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django import forms
 from django.db.models.signals import post_save
+from django.forms import ModelForm
 
 
 class UserProfile(models.Model):
@@ -83,6 +84,7 @@ class QuestionBase(models.Model):
 class Question(models.Model):
     #AcademicYear.objects.filter(year=2012).aggregate(Sum('year'))
     user = models.ForeignKey(User)
+    admin_comment = models.TextField(default="",blank=True)
     question_base = models.ForeignKey(QuestionBase,related_name="question_base")
     academic_year = models.ForeignKey(AcademicYear)
     question_text = models.TextField(null=True)
@@ -102,6 +104,17 @@ class Checklist(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True,null=True)
     def __unicode__(self):
         return str(self.user) + "-" + str(self.academic_year.year)
+        
+class FinanceRequest(models.Model):
+    user = models.ForeignKey(User)
+    description = models.TextField(default="",blank=True)
+    is_approved = models.BooleanField(default=False)
+    value = models.DecimalField(max_digits=10, decimal_places=2)
+    
+class FinanceRequestForm(ModelForm):
+    class Meta:
+        model = FinanceRequest
+        exclude = ('user','is_approved')
 
     
 def create_user_profile(sender, instance, created, **kwargs):
