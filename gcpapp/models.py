@@ -107,14 +107,17 @@ class Checklist(models.Model):
         
 class FinanceRequest(models.Model):
     user = models.ForeignKey(User)
+    title = models.CharField(max_length=40)
     description = models.TextField(default="",blank=True)
     is_approved = models.BooleanField(default=False)
     value = models.DecimalField(max_digits=10, decimal_places=2)
+    timestamp = models.DateTimeField(auto_now_add=True,null=True)
+    is_answered = models.BooleanField(default=False) #whether or not an admin responded
     
 class FinanceRequestForm(ModelForm):
     class Meta:
         model = FinanceRequest
-        exclude = ('user','is_approved')
+        exclude = ('user','is_approved','is_answered')
 
     
 def create_user_profile(sender, instance, created, **kwargs):

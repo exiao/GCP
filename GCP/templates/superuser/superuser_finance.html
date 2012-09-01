@@ -1,0 +1,119 @@
+{% extends "superuser/superuser.html" %}
+
+{% block title %} Admin - Finance{% endblock %}
+
+{% block super_content %}
+    {% if message %}
+    <p style="color:red">{{ message }}</p>
+    {% endif %}
+    <form method="post" action="."> {% csrf_token %}
+    <table class="table table-bordered">
+        <caption><h2> Finance Requests </h2></caption>
+        <thead>
+            <tr>
+                <th style="width: 70px;"> Action </th>
+                <th> Group </th>
+                <th> Officer Name </th>
+                <th> Email </th>
+                <th> Title </th>
+                <th style="width: 70px;"> Description </th>
+                <th> Amount </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for finance in finance_requests %}
+            <tr>
+                <td> 
+                    <input style="margin-top: -3px;" type="radio" name="approve" value="{{ finance.id }}"> Approve<br>
+                    <input style="margin-top: -3px;" type="radio" name="decline" value="{{ finance.id }}"> Decline
+                </td>
+                <td> {{ finance.user.get_profile.group_name}} </td>
+                <td> {{ finance.user.get_profile.officer_name }} </td>
+                <td> {{ finance.user.email }} </td>
+                <td> {{ finance.title }} </td>
+                <td> <a href="#modal-{{finance.id}}" class="btn btn-info" data-toggle="modal">View </a> </td>
+                <td> ${{ finance.value }} </td>
+
+            </tr>
+            
+            <div class="modal hide fade" id="modal-{{finance.id}}">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon icon-remove"></i></button>
+                    <h2 id="modal-{{finance.id}}-label">{{finance.title}} </h2>
+                </div>
+                <div class="modal-body">
+                    <p style="white-space: pre-wrap">{{ finance.description }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <input class="btn btn-success" type="submit" value="Respond" /> 
+    </form>
+    
+    
+    <form method="post" action="."> {% csrf_token %}
+    <table class="table table-bordered">
+        <caption><h2> Old Finance Requests </h2></caption>
+        <thead>
+            <tr>
+                <th> Status </th>
+                <th> Group </th>
+                <th> Officer Name </th>
+                <th> Email </th>
+                <th> Title </th>
+                <th style="width: 70px;"> Description </th>
+                <th> Amount </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for finance in old_requests %}
+            <tr>
+                <td> 
+                    {% if finance.is_approved %}
+                    <span style="color: green"> Approved </span>
+                    {% else %}
+                    <span style="color: red"> Declined </span>
+                    {% endif %}
+                </td>
+                <td> {{ finance.user.get_profile.group_name}} </td>
+                <td> {{ finance.user.get_profile.officer_name }} </td>
+                <td> {{ finance.user.email }} </td>
+                <td> {{ finance.title }} </td>
+                <td> <a href="#modal-{{finance.id}}" class="btn btn-info" data-toggle="modal">View </a> </td>
+                <td> ${{ finance.value }} </td>
+
+            </tr>
+            
+            <div class="modal hide fade" id="modal-{{finance.id}}">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon icon-remove"></i></button>
+                    <h2 id="modal-{{finance.id}}-label">{{finance.title}} </h2>
+                </div>
+                <div class="modal-body">
+                    <p style="white-space: pre-wrap">{{ finance.description }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    </form>
+{% endblock %}
+
+{% block super_js %}
+    <script type="text/javascript">
+        $(document).ready( function() {
+            $("#pill-finance").addClass("active");
+            
+        })
+    </script>
+
+{% endblock %}

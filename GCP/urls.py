@@ -25,6 +25,7 @@ urlpatterns = patterns('gcpapp.views',
     url(r'^superuser/staff/(?P<user_id>\d+)/$', 'superuser_staff_user', name='superuser_staff_user'),
     url(r'^superuser/staff/create/$', 'superuser_staff_create', name='superuser_staff_create'),
     url(r'^superuser/all_accounts/$', 'superuser_all_accounts', name='superuser_all_accounts'),
+    url(r'^superuser/finance/$', 'superuser_finance', name='superuser_finance'),
     
     #STAFF SECTION
     url(r'^staff/$', 'staff', name='staff'),
@@ -40,6 +41,8 @@ urlpatterns = patterns('gcpapp.views',
     url(r'^account/files/(?P<folder_id>\d+)/$', 'account_files'),
     url(r'^account/checklist/$', 'account_checklist_redirect', name='account_checklist_redirect'),
     url(r'^account/checklist/(?P<year>\d+)/$', 'account_checklist'),
+    url(r'^account/finance_request/$', 'account_finance_request',name="account_finance_request"),
+    url(r'^account/finance_request/create/$', 'account_finance_request_create',name="account_finance_request_create"),
     
     #AJAX SECTIONS
     url(r'^ajax_delete_folder/$','ajax_delete_folder'),

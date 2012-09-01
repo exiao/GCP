@@ -6,16 +6,19 @@
     <div class="span12">
         <br>
         {% block pills %}
-        {% comment %}
-        CHANGES HERE MUST BE MADE IN ACCOUNT_CHECKLIST AND ACCOUNT_FILES 
-        {% endcomment %}
-        <ul class="nav nav-pills" style="margin-bottom: 0px">
-            <li id="pill-profile"><a href="{% url account_profile %}">General</a></li>
-            {% if not user.is_staff %}
-            <li id="pill-files"><a href="/account/files/{{ user.get_profile.base_folder.id }}/">Files</a></li>
-            <li id="pill-checklist"><a href="{% url account_checklist_redirect %}">Checklist</a></li>
-            {% endif %}
-        </ul>
+            {% comment %}
+            <!--
+            CHANGES IN THIS "block pills" MUST BE DUPLICATED IN ACCOUNT_CHECKLIST AND ACCOUNT_FILES 
+            -->
+            {% endcomment %}
+            <ul class="nav nav-pills" style="margin-bottom: 0px">
+                <li id="pill-profile"><a href="{% url account_profile %}">General</a></li>
+                {% if not user.is_staff %}
+                <li id="pill-files"><a href="/account/files/{{ user.get_profile.base_folder.id }}/">Files</a></li>
+                <li id="pill-checklist"><a href="{% url account_checklist_redirect %}">Checklist</a></li>
+                <li id="pill-finance-request"><a href="{% url account_finance_request%}">Finance Request</a></li>
+                {% endif %}
+            </ul>
         {% endblock %}
                 <div class="empty-padding"> </div>
         {% block account_content %}

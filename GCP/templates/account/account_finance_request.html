@@ -1,0 +1,51 @@
+{% extends "account/account.html" %}
+{% block title %}General{% endblock %}
+
+    {% block account_content %}
+
+        <table class="table table-bordered">
+          <caption><h2> My Finance Requests </h2></caption>
+          <thead>
+            <tr>
+              <th> Title </th>
+              <th> Value </th>
+              <th> Date Sent </th>
+              <th> Status </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for entry in my_finance_requests %}
+            <tr>
+              <td> {{ entry.title }} </td>
+              <td> ${{ entry.value }} </td>
+              <td> {{ entry.timestamp }}</td>
+              <td>
+                {% if entry.is_answered %}
+                    {% if entry.is_approved %}
+                    <span style="color: green"> Approved </span>
+                    {% else %}
+                    <span style="color: red"> Declined </span>
+                    {% endif %}
+                {% else %}
+                    <span style="font-style: italic"> Still Processing... </span>
+                {% endif %}
+              </td>
+            </tr>
+                
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <a href="{% url account_finance_request_create %}" class="btn btn-info"> Create Request </a>
+
+    {% endblock %}
+
+
+{% block super_js %}
+<script type="text/javascript">
+  $(document).ready( function() {
+    $("#pill-finance-request").addClass("active");
+  })
+</script>
+
+{% endblock %}

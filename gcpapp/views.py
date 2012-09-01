@@ -304,6 +304,34 @@ def superuser_all_accounts(request):
             user.get_profile().delete()
             user.delete()
         return redirect('superuser_all_accounts')
+
+@login_required
+def superuser_finance(request):
+    data = {}
+    if request.user.is_superuser == False:
+        return HttpResponseRedirect('/')
+    if request.method == "GET":
+        finance_requests = FinanceRequest.objects.filter(is_answered=False)
+        old_requests = FinanceRequest.objects.filter(is_answered=True)
+        data['finance_requests'] = finance_requests
+        data['old_requests'] = old_requests
+        return render_to_response('superuser/superuser_finance.html',data,context_instance=RequestContext(request))
+    else:
+        approved = request.POST.getlist('approve')
+        declined = request.POST.getlist('decline')
+        for finance_id in approved:
+            finance = FinanceRequest.objects.get(id = int(finance_id))
+            finance.is_approved = True
+            finance.is_answered = True
+            finance.save()
+            #send_mail('ASUC Green Cat Finance Request', "You're finance request under the title: %s has been approved." % finance.title, EMAIL_HOST_USER, [finance.user.email])
+        for finance_id in declined:
+            finance = FinanceRequest.objects.get(id = int(finance_id))
+            finance.is_approved = False
+            finance.is_answered = True
+            finance.save()
+            #send_mail('ASUC Green Cat Finance Request', "You're finance request under the title: %s has been declined." % finance.title, EMAIL_HOST_USER, [finance.user.email])
+        return redirect('superuser_finance')
         
 @login_required
 def staff(request):
@@ -559,6 +587,34 @@ def checklist_work(request,year,checklist_user):
             checklist.timestamp = datetime.datetime.now()
             checklist.save()
             return redirect('/account/checklist/%d/?message=Checklist updated!' % int(year))
+
+@login_required
+def account_finance_request(request):
+    data = {}
+    if request.method == "GET":
+        my_finance_requests = FinanceRequest.objects.filter(user=request.user).order_by('-timestamp')
+        data['my_finance_requests'] = my_finance_requests
+        return render_to_response('account/account_finance_request.html',data,context_instance=RequestContext(request))
+            
+@login_required
+def account_finance_request_create(request):
+    data = {}
+    if request.method == "GET":
+        form = FinanceRequestForm()
+        data['form'] = form
+        return render_to_response('account/account_finance_request_create.html',data,context_instance=RequestContext(request))
+    else:
+        form = FinanceRequestForm(request.POST)
+        if form.is_valid():
+            # SEND MAIL?
+            fin = form.save(commit=False)
+            fin.user = request.user
+            fin.save()
+            message = 'Your finance request has been sent. You will be notified through email with the response.'
+            return render_to_response('small_message.html',{'title':'Finance Request Sent','message':message}, context_instance=RequestContext(request))
+        else: #this shouldn't run as the front end will validate the form
+            data['form'] = form
+            return render_to_response('account/account_finance_request_create.html',data,context_instance=RequestContext(request))      
 
 @login_required
 def ajax_delete_folder(request):

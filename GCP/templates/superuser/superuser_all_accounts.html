@@ -66,7 +66,9 @@
         <tbody>
             {% for entry in all_staff %}
             <tr>
-                <td><input style="margin-top:0px;" type="checkbox" name="Delete" value="{{ entry.id }}"> Delete</td>
+                <td>
+                    <input style="margin-top:0px;" type="checkbox" name="Delete" value="{{ entry.id }}" {% if entry.is_superuser %}class="superuser"{%endif%}> Delete
+                </td>
                 <td> {{ entry.username }} </td>
                 <td> {{ entry.first_name }} </td>
                 <td> {{ entry.last_name }} </td>
@@ -101,8 +103,16 @@
                 alert('You have not selected any accounts');
                 return false;
             }
+            
+            //safeguard from deleting all superusers
+            var selected_supers = $(".superuser input:checked").length;
+            var all_supers = $(".superuser input").length;
+            if (selected_supers === all_supers) {
+                alert("You can't delete superusers to the point where you have none. You MUST have at least one existing.");
+                return false;
+            }
         
-            var bool = confirm('Are you sure you want to delete these accounts? This action is permanent.')
+            var bool = confirm('Are you sure you want to delete these accounts? You are going to lose all user related data as well. This action is permanent.')
             return bool;
         }
     </script>

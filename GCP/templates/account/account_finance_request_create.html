@@ -1,0 +1,93 @@
+{% extends "account/account.html" %}
+{% block title %}Finance Request{% endblock %}
+
+{% block account_content %}
+{% if message %}
+    {{ message }}
+{% endif %}
+
+<div class="span12">
+<legend>
+    <h2> Finance Request</h2>
+  </legend>
+<form action="."  method="post" class="form-horizontal" id="financeForm">{% csrf_token %}
+  
+  <br />
+  <div id="fields form">
+    {% for field in form %}
+      <div class="control-group">
+        {{ field.errors }}
+        
+        {% if field.html_name == "value" %}
+        <label class="control-label" id="{{field.html_name}}">{{ field.label }}</label>
+        <div  class="controls">
+        $ 
+        {% else %}
+        <label class="control-label" id="{{field.html_name}}">{{ field.label }}</label>
+        <div style="margin-left: 172px;" class="controls ">
+        
+        {% endif %}
+        {{ field }}
+        
+          <span class="help-block">{{ field.help_text }}</span>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <br />
+  <input type="submit" style="margin-left:100px" class="btn btn-primary" value="Submit" />
+
+  </form>
+  </div>
+    
+    
+
+{% endblock %}
+
+
+{% block super_js %}
+<script type="text/javascript" src="/static/jquery-validation-1.9.0/jquery.validate.min.js"></script>
+<script type="text/javascript">
+  $(document).ready( function() {
+    
+    $("#financeForm").validate({
+      rules: {
+        title: {
+          required: true,
+          maxlength: 40,
+        },
+        description: {
+          required: true,
+        },
+        value: {
+          required: true,
+          number: true,
+        },
+      } 
+    });
+    
+    // require price only has 2 decimals
+    (function($) {
+        $.fn.currencyFormat = function() {
+            this.each( function( i ) {
+                $(this).change( function( e ){
+                    if( isNaN( parseFloat( this.value ) ) ) return;
+                    if (this.value.split(".").length >1) {
+                      this.value = parseFloat(this.value).toFixed(2);
+                    }
+                });
+            });
+            return this; //for chaining
+        }
+    })( jQuery );
+    
+    $( function() {
+        $('#id_value').currencyFormat();
+    });
+  })
+  
+  
+    // end price validation
+</script>
+
+{% endblock %}
