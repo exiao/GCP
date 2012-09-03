@@ -6,7 +6,10 @@
     {% if message %}
     <p style="color:red">{{ message }}</p>
     {% endif %}
-    <p style="text-align:center; font-weight:bold;" class="well"> Click username to edit privileges. </p>
+    <p style="text-align:center;" class="well">
+        <b>Click a username to edit privileges.<br></b>
+        Superusers won't appear here because you can't edit their privileges.
+    </p>
     
     <table class="table table-bordered">
         <caption><h2>Staff Members </h2></caption>

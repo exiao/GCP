@@ -79,15 +79,21 @@ body
     /*background-color:#92d35b;*/
     background-repeat:repeat;
     height: 100%;
-    bottom: 0;
+    margin: 0;
+    padding: 0;
+}
+
+#whole-container {
+    min-height:100%;
+    position:relative;
 }
 
 .page-content {
     background-color: white;
     /*height: 100%; */
-    min-height: 80%;
-    margin-bottom: 20px;
+    padding-top: 10px;
     padding-bottom: 20px;
+    min-height: 300px;
 }
 
 .page-stretch {
@@ -97,10 +103,12 @@ body
 
 html {
     height: 100%;
-    bottom: 0;
-
 }
 
+#inner-body {
+    padding-top:10px;
+    padding-bottom:90px;
+}
 
 .container , .container-fluid{
     width: 980px;
@@ -112,11 +120,11 @@ html {
 }
 
 .header {
-    padding-top:20px;
+    padding-top:0px;
 }
 
 .footer {
-    position: relative;
+    position: absolute;
     bottom: 0;
     margin-bottom: 0;
     padding-bottom: 0;
@@ -125,7 +133,7 @@ html {
     border-width: 1px;
     background-color: rgb(248, 248, 248);;
     padding-top: 20px;
-    height: 8%;
+    height: 40px;
     width: 100%;
     min-width: 982px;
 }
