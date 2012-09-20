@@ -27,6 +27,8 @@
 
 </head>
 <body>
+{% block body %}
+{% endblock %}
 <div id="whole-container">
 
 <div class="navbar">
@@ -80,12 +82,16 @@
 
 <div class="footer">
     <div class="container">
-    <div class="span12">
-        <div class="span3"> berkeley logo here</div>
-        <div class="span3"> something logo here</div>
-        <div class="span3"> stuff logo here</div>
-        <div class="span2"> stuff logo here</div>
-    </div>
+        <div class="span3">
+            <img src="/static/images/Berkeley_Seal.png" style="height:70px; width:70px;" alt="">
+        </div>
+        <div class="span7">
+            <img src="/static/images/logo-black_text.gif" style="height:58px; width:409px;" alt="">
+        </div>
+        <div class="span2">
+            <img src="/static/images/ASUC-Green-Cert-Logos-2.png" style="height:70px; width:78px;" alt="">
+        </div>
+        <div class="fb-like" data-href="https://www.facebook.com/ASUCgreencert" data-send="true" data-layout="button_count" data-width="450" data-show-faces="true" data-font="verdana"></div>
     </div>
 </div>
 

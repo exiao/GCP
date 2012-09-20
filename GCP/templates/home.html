@@ -1,24 +1,57 @@
 {% extends "base.html" %}
+{% block css %}
+body {
+    background-color: white;
+    background-image: none;
+}
+.container {
+    width: auto;
+}
+{% endblock %}
+{% block body %}
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+{% endblock %}
 
+{% block all_content %}
+<div id="index-banner">
+    <div id="index-internal">
+        <div class="span4">
+            <img src="/static/images/ASUC-Green-Cert-Logos-1.png" alt="">
+        </div>
+        <div class="span8">
+            <h1>ASUC Green Cat Program <br>
+                <h2>Sustainability for the future</h2>
+            </h1>
+        </div>
+    </div>
+</div>
 {% block content %}
     <!--
     <div >
     <img class="center" src="static/powersave.jpg" style="padding-left: 0px; width:980px; height: 175px;" >
     </div>
     -->
-
+    <div class="container page-content">
         <div class="span12">
+            <div class="span4">
             <h2> Hi There </h2>
             <p>
-                We do things like clean and stuff ohh yea,We do things like clean and stuff ohh yea,
-                We do things like clean and stuff ohh yea,We do things like clean and stuff ohh yea,
-                We do things like clean and stuff ohh yea,We do things like clean and stuff ohh yea,
-                We do things like clean and stuff ohh yea,We do things like clean and stuff ohh yea,
-                We do things like clean and stuff ohh yea,We do things like clean and stuff ohh yea,
-
-
+                Welcome to our site! We are clean! I also like to shop for clothes!
             </p>
+            <div class="fb-activity" data-href="https://www.facebook.com/ASUCgreencert" 
+            data-width="300" data-height="300" data-header="true" data-font="verdana" 
+            data-recommendations="true">
+            </div>
+            </div>
             <br>
+            <div class="span7">
             <center>
             <div id="myCarousel"class="carousel slide set-image-dimension">
                 <!-- Carousel items -->
@@ -45,15 +78,29 @@
                         </div>
                     </div>
                 </div>
-                <!-- Carousel nav -->
+                <!-- Carousel nav 
                 <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-                <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+                <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>-->
             </div>
-            </center>
-    
+            </div>
+            
+            <div class="container">
+                <div class="span5">
+                    <h1>Things</h1>
+                </div>
+                <div class="span5">
+                    <h1>Stuff</h1>
+                </div>
+                <div class="span1">
+                    <h1>Art</h1>
+                </div>
+            </div>
+            
         </div>
+    </div>
 
 
+{% endblock %}
 {% endblock %}
 
 {% block post_js %}
