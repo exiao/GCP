@@ -5,33 +5,28 @@ body {
     background-image: none;
 }
 .container {
-    width: auto;
+    /* width: auto; */
     min-width: 960px;
 }
 {% endblock %}
-{% block body %}
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
-{% endblock %}
+
 
 {% block all_content %}
+<div class="page-content">
+
 <div id="index-banner">
     <div id="index-internal">
-        <div class="span4">
+        <div class="" style="float: left;">
             <img src="/static/images/ASUC-Green-Cert-Logos-1.png" alt="">
         </div>
-        <div class="span8 index-slogan">
-            <h1>ASUC Green Cat Program<br>
+        <div class="index-slogan" style="float: left; padding-left:20px;">
+            <h1 style="letter-spacing:-1px;">ASUC Green Certification Program<br>
                 <h2>Sustainability for the future</h2>
             </h1>
         </div>
     </div>
+    
+    <br clear="both" />
 </div>
 {% block content %}
     <!--
@@ -39,22 +34,24 @@ body {
     <img class="center" src="static/powersave.jpg" style="padding-left: 0px; width:980px; height: 175px;" >
     </div>
     -->
-    <div class="container page-content">
-        <div class="span12">
-            <div class="span4">
-            <h2> Hi There </h2>
-            <p>
+    <div class="page-content">
+        <div class="middle-container">
+            <div class="middle-banner" >
+              <div id="home-announcement">
+                <h2 style="font-family: 'Proxima Nova', 'proxima-nova', 'Helvetica Neue', Helvetica, sans-serif; text-align:center; letter-spacing: -1px; border-bottom: 1px solid black"> Announcements </h2>
+                <p>
                 Welcome to our site! We are clean! I also like to shop for clothes!
-            </p>
-            <div class="fb-activity" data-href="https://www.facebook.com/ASUCgreencert" 
-            data-width="300" data-height="300" data-header="true" data-font="verdana" 
-            data-recommendations="true">
-            </div>
-            </div>
-            <br>
-            <div class="span7">
-            <center>
-            <div id="myCarousel"class="carousel slide set-image-dimension">
+                Welcome to our site! We are clean! I also like to shop for clothes!
+
+                <br><br>
+                Welcome to our site! We are clean! I also like to shop for clothes!
+                Welcome to our site! We are clean! I also like to shop for clothes!
+                Welcome to our site! We are clean! I also like to shop for clothes!
+                </p>
+                
+              </div>
+              
+              <div id="myCarousel" class="carousel slide set-image-dimension" style="float:left; margin-bottom: 0;">
                 <!-- Carousel items -->
                 <div class="carousel-inner">
                     <div class="active item">
@@ -79,29 +76,67 @@ body {
                         </div>
                     </div>
                 </div>
-                <!-- Carousel nav 
+                
                 <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
-                <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>-->
-            </div>
-            </div>
+                <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+              </div>
             
-            <div class="container">
-                <div class="span5">
-                    <h1>Things</h1>
-                </div>
-                <div class="span5">
-                    <h1>Stuff</h1>
-                </div>
-                <div class="span1">
-                    <h1>Art</h1>
-                </div>
+              
             </div>
+            <br clear="both" />
+         </div>
             
-        </div>
+            
+            
+            <div class="lower-banner">
+              <div class="lower-container">
+                <h1 style="text-align:center;"> More announcements or something of that nature</h1><br>
+            
+                <div class="shadow-text-box">
+                  <div class="text-head">
+                    MEETINGS
+                  </div>
+                  <div class="text-body">
+                    STUFF HERE
+                  </div>
+                </div>
+                
+                <div class="shadow-text-box">
+                  <div class="text-head">
+                    MEETINGS
+                  </div>
+                  <div class="text-body">
+                    STUFF HERE STUFF HERE STUFF HERE STUFF HERE
+                    STUFF HERE STUFF HERE STUFF HERE STUFF HERE
+                    STUFF HERE STUFF HERE STUFF HERE STUFF HERE
+                    STUFF HERE STUFF HERE STUFF HERE STUFF HERE
+                    STUFF HERE STUFF HERE STUFF HERE STUFF HERE
+                  </div>
+                </div>
+                
+                <div class="shadow-text-box">
+                  <div class="text-head">
+                    MEETINGS
+                  </div>
+                  <div class="text-body">
+                    STUFF HERE
+                  </div>
+                </div>
+            
+                <div style="background-color:white; float:right; margin-left: 10px; margin-right:5px;" class="fb-activity" data-href="https://www.facebook.com/ASUCgreencert" 
+                data-width="200" data-height="300" data-header="true" data-font="verdana" 
+                data-recommendations="true"></div> 
+              </div>
+              <br clear="both" />
+            </div>       
+            
+            
     </div>
+    <br clear="both" />
 
 
 {% endblock %}
+</div>
 {% endblock %}
 
 {% block post_js %}

@@ -28,6 +28,14 @@
 </head>
 <body>
 {% block body %}
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 {% endblock %}
 <div id="whole-container">
 
@@ -82,16 +90,17 @@
 
 <div class="footer">
     <div class="container">
-        <div class="span3">
+        <div class="span2">
             <img src="/static/images/Berkeley_Seal.png" style="height:70px; width:70px;" alt="">
         </div>
-        <div class="span7">
+        <div class="span6">
             <img src="/static/images/logo-black_text.gif" style="height:58px; width:409px;" alt="">
         </div>
         <div class="span2">
             <img src="/static/images/ASUC-Green-Cert-Logos-2.png" style="height:70px; width:78px;" alt="">
         </div>
         <div class="fb-like" data-href="https://www.facebook.com/ASUCgreencert" data-send="true" data-layout="button_count" data-width="450" data-show-faces="true" data-font="verdana"></div>
+        
     </div>
 </div>
 
