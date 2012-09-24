@@ -3,20 +3,46 @@
 {% block title %}Resources{% endblock %}
 
 {% block content %}
-
+{% load static %}
 
     <div class="span12">
             <legend class="header"><h2> Resources </h2></legend>
-            <p>
-                <a href="#"> Group Application </a> - Apply as a group <br>
-                <a href="#"> Intern Application </a> - Apply as an intern <br>
-                <a href="#"> Green Guide </a> - Go green people! <br>
+                <a href="{% get_static_prefix %}documents/Student Group Applications 2012-2013.pdf"> Group Application </a>
+                <ul>
+                    <li>
+                    Any ASUC funded student group is welcome to 
+                    apply for Green Cert. Applications for the 2012-2013 
+                    academic year are due September 15, 2012. 
+                    </li>
+                </ul>	
+
+                <a href="{% get_static_prefix %}documents/Intern Applications 2012-2013.pdf"> Intern Application </a>
+                    <ul>
+                        <li>
+                        All Cal students are encouraged to apply, 
+                        we will be selecting students by September 20th. 
+                        </li>
+                    </ul>
+                <a href="{% get_static_prefix %}documents/ASUC Green Certification Report 2012.pdf"> Green Checklist </a>
+                    <ul>
+                        <li>
+                        The Green Checklist is the basis of ASUC GCP. This document outlines the structure of the program and organizes categories in which student groups are able to reduce their waste. The Checklist also offers the ability for groups to create new ways in which they can become more sustainable via the Miscellaneous portion of the guide. 
+                        </li>
+                    </ul>
                 <br>
-                <br>
-                Useful Links: <br>
-                <a href="http://www.google.com"> www.google.com </a><br>
-                <a href="http://www.facebook.com"> www.facebook.com </a>
-            </p>
+                 Links to outside websites that are helpful: <br>
+                <ul>
+                    <li>
+                    <a href="http://calsteam.wordpress.com/">Office of Sustainability, Steam 
+                    </a>
+                    </li>
+                    <li>
+                    <a href="http://buildingsustainability.berkeley.edu/">Building Sustainability @ Cal </a>
+                    </li>
+                    <li>
+                    <a href="http://tgif.berkeley.edu/">TGIF</a></li>
+                </ul>
+                 Downloadable version of our semester schedule (coming soon)
     </div>
 
 {% endblock %}
