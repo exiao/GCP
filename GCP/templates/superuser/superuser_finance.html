@@ -56,7 +56,7 @@
     </form>
     
     
-    <form method="post" action="."> {% csrf_token %}
+    <form method="post" action="./delete"> {% csrf_token %}
     <table class="table table-bordered">
         <caption><h2> Old Finance Requests </h2></caption>
         <thead>
@@ -68,6 +68,7 @@
                 <th> Title </th>
                 <th style="width: 70px;"> Description </th>
                 <th> Amount </th>
+                <th> Delete </th>
             </tr>
         </thead>
         <tbody>
@@ -86,6 +87,9 @@
                 <td> {{ finance.title }} </td>
                 <td> <a href="#modal-{{finance.id}}" class="btn btn-info" data-toggle="modal">View </a> </td>
                 <td> ${{ finance.value }} </td>
+                <td>
+                  <input style="margin-top:0px;" type="checkbox" name="Delete" value="{{ finance.id }}"> Delete
+                </td>
 
             </tr>
             
@@ -104,7 +108,7 @@
             {% endfor %}
         </tbody>
     </table>
-
+    <input type="submit" value="Delete" class="btn btn-danger" />
     </form>
 {% endblock %}
 

@@ -311,8 +311,8 @@ def superuser_finance(request):
     if request.user.is_superuser == False:
         return HttpResponseRedirect('/')
     if request.method == "GET":
-        finance_requests = FinanceRequest.objects.filter(is_answered=False)
-        old_requests = FinanceRequest.objects.filter(is_answered=True)
+        finance_requests = FinanceRequest.objects.filter(is_answered=False,admin_deleted=False)
+        old_requests = FinanceRequest.objects.filter(is_answered=True,admin_deleted=False)
         data['finance_requests'] = finance_requests
         data['old_requests'] = old_requests
         return render_to_response('superuser/superuser_finance.html',data,context_instance=RequestContext(request))
@@ -332,6 +332,22 @@ def superuser_finance(request):
             finance.save()
             #send_mail('ASUC Green Cat Finance Request', "You're finance request under the title: %s has been declined." % finance.title, EMAIL_HOST_USER, [finance.user.email])
         return redirect('superuser_finance')
+        
+@login_required
+def superuser_finance_delete(request):
+    if request.method == "POST":
+        delete_list = request.POST.getlist("Delete")
+        for delete_id in delete_list:
+            finance_request = FinanceRequest.objects.get(id=int(delete_id))
+
+            if finance_request.user_deleted:
+                finance_request.delete()
+            else:
+                finance_request.admin_deleted = True
+                finance_request.save()
+
+        return redirect('superuser_finance')
+        
         
 @login_required
 def staff(request):
@@ -592,9 +608,22 @@ def checklist_work(request,year,checklist_user):
 def account_finance_request(request):
     data = {}
     if request.method == "GET":
-        my_finance_requests = FinanceRequest.objects.filter(user=request.user).order_by('-timestamp')
+        my_finance_requests = FinanceRequest.objects.filter(user=request.user,user_deleted=False).order_by('-timestamp')
         data['my_finance_requests'] = my_finance_requests
         return render_to_response('account/account_finance_request.html',data,context_instance=RequestContext(request))
+    else:
+        delete_list = request.POST.getlist("Delete")
+        for delete_id in delete_list:
+            finance_request = FinanceRequest.objects.get(id=int(delete_id))
+            if finance_request.is_answered:
+                if finance_request.admin_deleted:
+                    finance_request.delete()
+                else:
+                    finance_request.user_deleted = True
+                    finance_request.save()
+            else:
+                finance_request.delete()
+        return redirect(".")
             
 @login_required
 def account_finance_request_create(request):

@@ -2,7 +2,9 @@
 {% block title %}General{% endblock %}
 
     {% block account_content %}
-
+    <a href="{% url account_finance_request_create %}" class="btn btn-success"> New Finance Request </a>
+    
+        <form method="post" action="."> {% csrf_token %}
         <table class="table table-bordered">
           <caption><h2> My Finance Requests </h2></caption>
           <thead>
@@ -11,6 +13,7 @@
               <th> Value </th>
               <th> Date Sent </th>
               <th> Status </th>
+              <th> Delete </th>
             </tr>
           </thead>
           <tbody>
@@ -30,13 +33,18 @@
                     <span style="font-style: italic"> Still Processing... </span>
                 {% endif %}
               </td>
+              <td>
+                <input style="margin-top:0px;" type="checkbox" name="Delete" value="{{ entry.id }}"> Delete
+              </td>
             </tr>
                 
             {% endfor %}
           </tbody>
         </table>
+        <input class="btn btn-danger" type="submit" value="Delete" /> 
+        </form>
 
-        <a href="{% url account_finance_request_create %}" class="btn btn-info"> Create Request </a>
+        
 
     {% endblock %}
 
