@@ -3,17 +3,22 @@
 {% block title %}Contact{% endblock %}
 
 {% block content %}
-
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
     <div class="span12">
             <legend class="header"><h2> Contact Us</h2></legend>
             <p>
-                If you'd like to reach us,<br>
+                Feel free to contact us through the following means.<br><Br>
                 Email: <a href="mailto:asucgreencat@gmail.com">asucgreencat@gmail.com</a><br>
-                Like us on <a href = "https://www.facebook.com/ASUCgreencert">Facebook!</a>
-                <div class="fb-like span2" data-href="https://www.facebook.com/BuyNearMe" 
-                data-send="true" data-layout="button_count" data-width="450" 
-                data-show-faces="false" data-font="verdana">
+                Visit our <a href = "https://www.facebook.com/ASUCgreencert">Facebook</a><br>
+                <div class="fb-like-box" data-href="http://www.facebook.com/asucgreencert" data-width="292" data-height="400" data-show-faces="true" data-stream="false" data-header="true"></div>
             </p>
     </div>
 
