@@ -3,12 +3,12 @@
 {% block title %}Reports{% endblock %}
 
 {% block content %}
-
+{% load static %}
 
     <div class="span12">
             <legend class="header"><h2> Reports </h2></legend>
             <p>
-                We made $100000 this year. Hooray!
+                <a href="{% get_static_prefix %}reports/BMUNGreenCATFinal.pdf"> Things </a>
             </p>
     </div>
 
