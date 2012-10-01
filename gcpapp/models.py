@@ -76,10 +76,13 @@ class AcademicYear(models.Model):
 class QuestionBase(models.Model):
     question_text = models.TextField()
     point_value = models.IntegerField()
+    
     def delete(self, *args, **kwargs):
         for question in self.question_base.all():
             question.delete()
         super(QuestionBase, self).delete(*args, **kwargs)
+    def __unicode__(self):
+        return self.question_text
 
 class Question(models.Model):
     #AcademicYear.objects.filter(year=2012).aggregate(Sum('year'))
@@ -96,7 +99,19 @@ class Question(models.Model):
         for file in self.files.all():
             file.delete()
         super(Question, self).delete(*args, **kwargs)
+    def __unicode__(self):
+        return self.question_base.question_text
 
+class QuestionGroup(models.Model):
+    title = models.CharField(max_length=100)
+    question_bases = models.ManyToManyField("QuestionBase")
+    def delete(self, *args, **kwargs):
+        for question in self.question_bases.all():
+            question.delete()
+        super(QuestionGroup, self).delete(*args, **kwargs)
+    def __unicode__(self):
+        return self.title
+        
 class Checklist(models.Model):
     user = models.ForeignKey(User)
     questions = models.ManyToManyField("Question")
