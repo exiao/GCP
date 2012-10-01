@@ -2,7 +2,11 @@
 {% block title %}General{% endblock %}
 
     {% block account_content %}
-    <a href="{% url account_finance_request_create %}" class="btn btn-success"> New Finance Request </a>
+    {% if message %}
+    <p style="color:red">{{ message }}</p>
+    {% endif %}
+    
+    
     
         <form method="post" action="."> {% csrf_token %}
         <table class="table table-bordered">
@@ -43,6 +47,8 @@
         </table>
         <input class="btn btn-danger" type="submit" value="Delete" /> 
         </form>
+        <br>
+        <a href="{% url account_finance_request_create %}" class="btn btn-success"> New Finance Request </a>
 
         
 

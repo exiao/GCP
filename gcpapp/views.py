@@ -581,6 +581,7 @@ def checklist_work(request,year,checklist_user):
                 checklist.questions.add(question)
 
         questions = checklist.questions.all()
+        data['question_groups'] = QuestionGroup.objects.all()
         data['questions'] = questions
         data['checklist'] = checklist
         data['all_years'] = AcademicYear.objects.all().order_by('year')
@@ -638,6 +639,8 @@ def account_finance_request(request):
     if request.method == "GET":
         my_finance_requests = FinanceRequest.objects.filter(user=request.user,user_deleted=False).order_by('-timestamp')
         data['my_finance_requests'] = my_finance_requests
+        if request.GET.__contains__('message'):
+            data['message'] = request.GET['message']
         return render_to_response('account/account_finance_request.html',data,context_instance=RequestContext(request))
     else:
         delete_list = request.POST.getlist("Delete")
@@ -668,7 +671,7 @@ def account_finance_request_create(request):
             fin.user = request.user
             fin.save()
             message = 'Your finance request has been sent. You will be notified through email with the response.'
-            return render_to_response('small_message.html',{'title':'Finance Request Sent','message':message}, context_instance=RequestContext(request))
+            return redirect('/account/finance_request/?message=%s' % message)
         else: #this shouldn't run as the front end will validate the form
             data['form'] = form
             return render_to_response('account/account_finance_request_create.html',data,context_instance=RequestContext(request))      
