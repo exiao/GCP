@@ -405,9 +405,14 @@ def superuser_content(request):
             return HttpResponseRedirect('.')
         elif request.POST.__contains__('photo_name'):
             photo_name = request.POST['photo_name']
+            description = request.POST['description']
             image = request.FILES['image']
-            obj = Image.objects.create(image=image,name=str(photo_name),section="homepage_slideshow")
+            obj = Image.objects.create(image=image,name=photo_name,description=description,section="homepage_slideshow")
             return redirect('/superuser/?message=%s' % "Image uploaded!")
+        elif request.POST.__contains__('delete_image_id'):
+            image_id = request.POST['delete_image_id']
+            Image.objects.get(id=int(image_id)).delete()
+            return redirect('/superuser/?message=%s' % "Image deleted!")
         form = AnnouncementForm(request.POST)
         #print(request.POST)
         if form.is_valid():

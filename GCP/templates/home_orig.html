@@ -54,19 +54,32 @@ font-family: 'Trebuchet MS', Helvetica, sans-serif;text-shadow:0 0 0.2em white;"
               
               <div id="myCarousel" class="carousel slide set-image-dimension" style="float:left; margin-bottom: 0;">
                 <div class="carousel-inner">
-                    {% for image in images %}
                     
-                    <div class="item">
-                        <img class="set-image-dimension" src="{{ image.image.url }}" alt="">
+                    {% for image in images %}
+                
+                    {% if forloop.first %}
+                        <div class="active item">
+                    {% else %}
+                        <div class="item">
+                    {% endif %}
+                    <img class="set-image-dimension" src="{{ image.image.url }}" alt="...">
+                    
+                    {% if image.description %}
+                    <div class="carousel-caption">
+                      <p style="white-space: pre-wrap"> {{ image.description }} </p>
                     </div>
+                    {% endif %}
+                    
+                    </div>
+                    
                     {% endfor %}
+                    
                 </div>
                 
                 <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
                 <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
               </div>
-            
-              
+                    
             </div>
             <br clear="both" />
          </div>
@@ -87,6 +100,10 @@ font-family: 'Trebuchet MS', Helvetica, sans-serif;text-shadow:0 0 0.2em white;"
                     I liek to move it move it.
                     I liek to move it move it.
                     I liek to move it move it.
+                    I liek to move it move it. I liek to move it move it. I liek to move it move it.
+                    I liek to move it move it.
+                    I liek to move it move it.
+    
                   </div>
                 </div>
                 
@@ -131,7 +148,7 @@ font-family: 'Trebuchet MS', Helvetica, sans-serif;text-shadow:0 0 0.2em white;"
 {% block post_js %}
 <script type="text/javascript">
   $(document).ready( function() {
-    $("#home-nav").addClass("active")
+    $("#home-nav").addClass("active");
     $('.carousel').carousel({
         pause: "hover"
     })

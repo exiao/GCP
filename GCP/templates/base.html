@@ -43,8 +43,9 @@
     <div class="navbar-inner">
         <div class="container">
             <div class="nav-collapse">
+                
                 <a class="brand" href="/">
-                    Green Cat Program
+                    GCP
                 </a>
                 <ul class="nav">
                     <li id="home-nav"><a href="/"> Home </a></li>
@@ -63,7 +64,7 @@
                     {% endif %}
                     {% if user.is_authenticated %}
                         <li id="account-nav"><a href="{% url account_profile %}"><i class="icon-cog"></i> Account</a></li>
-                        <li><a href="/logout/" style="margin-left: 5px;"> Log out </a></li>
+                        <li><a href="/logout/" style="margin-left: 5px; font-weight: bold;"> Log out </a></li>
                     {% else %}
                         <div class="btn-group">
                             <a href="{% url login %}" class="btn"> Log In </a>

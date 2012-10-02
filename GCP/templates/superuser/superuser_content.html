@@ -61,18 +61,51 @@
     </form>
     
     <hr>
-    
-    <h2> Current Slideshow Photos </h2>
-    {% for image in images %}
-    <a href="{{ image.image.url }}"> {{image.name}} </a><br>
-    {% endfor %}
+ 
+    <table class="table table-bordered">
+        <caption><h2> Current Slideshow Photos </h2></caption>
+        <thead>
+            <tr>
+                <th style="width: 150px;"> Thumbnail</th>
+                <th> Name </th>
+                <th> Description </th>
+                <th style="width: 100px;">Delete </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for image in images %}
+            <tr>
+                <td> <img style="width:150px; height: 100px;" src="{{ image.image.url }}" alt=""> </td>
+                <td> <a href="{{ image.image.url }}"> {{image.name}} </a> </td>
+                <td><p style="white-space:pre-wrap;"> {{ image.description }} <p></td>
+                <form action="." method="post" onsubmit="return confirm('You are about to delete the image: {{ image.name }}')">{% csrf_token %}
+                <input type="hidden" name="delete_image_id" value="{{ image.id }}" />
+                    <td>
+                        <input type="submit" class="btn btn-danger btn-small" value='Delete' />
+                    </td>
+                </form>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
     <form action="." method="post" class="well" id="imageForm" enctype="multipart/form-data">{% csrf_token %}
         <h4>Add Photo</h4>
         
         <label class="control-label" id="photo_label">Photo Name</label>
         <input name="photo_name" type="text" /><br>
+        
+        <label class="control-label" id="description_label">Description</label>
+        <textarea name="description" rows="5" style="width: 80%;"></textarea><br>
+        <span class="help-block">Leave description blank if you do not want a description in the slideshow.</span>
+        
         <label class="control-label" id="photo_upload">Upload</label>
         <input id="image-input" name="image" type="file"> <br><br>
+        <p> <b>Note</b>: <br>Images are in a width:height ratio of 7:4. So for the best looking images, they should be pre-formatted to have this ratio.<br>
+        Ideally it would be a 700px(width) by 400px(height) photo. But any photo of this ratio will work (e.g. 1400px by 800px).</p>
+        <br>
         
         <input type="submit" class="btn btn-primary"  value="Submit" />
     </form>

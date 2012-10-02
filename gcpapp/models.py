@@ -70,6 +70,7 @@ class File(models.Model):
 
 class Image(models.Model):
     name = models.CharField(max_length=50)
+    description = models.TextField(null=True,blank=True)
     section = models.CharField(max_length=50,null=True)
     image = models.ImageField(upload_to="images")
     timestamp = models.DateTimeField(auto_now_add=True,null=True)
