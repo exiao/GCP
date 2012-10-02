@@ -46,7 +46,12 @@
     <br>
     
     <form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
+    
+    {% for question_group in question_groups %}
+    <legend> {{ question_group.title }}</legend>
+    
     {% for question in questions %}
+    {% if question.question_base in question_group.question_bases.all %}
     <div class="accordion" id="accordion-{{ question.id }}">
         <div class="accordion-group">
             <div class="accordion-heading">
@@ -106,6 +111,9 @@
                         
                         {% comment %}{% if question.files.all|length > 0  %}{% endcomment %}
                             <label><b>Current Documents/Photos</b></label>
+                            {% if not question.files.all %}
+                            None<br>
+                            {% endif %}
                             {% for file in question.files.all %}
                                 <a href="{{ file.file.url }}">{{ file.name }} </a>
                                 {% if checklist_user == user or user.is_superuser %}
@@ -141,8 +149,13 @@
             </div>
         </div>
     </div>
+    
+    {% endif %}
+    {% endfor %}
+    
     {% endfor %}
     <input type="submit" class="btn btn-primary" value="Update" />
+
     </form>
 
 {% endblock %}
