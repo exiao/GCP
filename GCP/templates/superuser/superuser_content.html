@@ -1,0 +1,85 @@
+{% extends "superuser/superuser.html" %}
+
+{% block title %} Admin - Content{% endblock %}
+
+{% block super_content %}
+    {% if message %}
+    <p style="color:red">{{ message }}</p>
+    {% endif %}
+    <form method="post" action="."> {% csrf_token %}
+    <table class="table table-bordered">
+        <caption><h2> Announcements </h2></caption>
+        <thead>
+            <tr>
+                <th style="width: 70px;"> Title</th>
+                <th style="width: 70px;"> Entry </th>
+                <th style="width: 110px;"> Date Created </th>
+                <th>Description  </th>
+                <th>Delete </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for announcement in announcements %}
+            <tr>
+                <td> {{ announcement.title }} </td>
+                <td> {{ announcement.entry.title }} </td>
+                <td> {{ announcement.timestamp }} </td>
+                <td> {{ announcement.body }} </td>
+                
+                <form action="." method="post" onsubmit="return confirm('If there are no announcements, the home page will display old content, are you sure you wish to proceed?')">{% csrf_token %}
+                <input type="hidden" name="delete_announcement" 
+                    value="{{ announcement.id }}" />
+                    <td>
+                        <input type="submit" class="btn btn-danger btn-small" value='Delete' />
+                    </td>
+
+            </form>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <form action="." method="post" id="announcementForm">{% csrf_token %}
+        <h4>Add New Announcement</h4>
+        <p>
+            <!--label style="width:150px">Title</label><input name="title" type="text" />
+            <br>
+            <label style="width:150px">Body</label> <textarea rows="5" style="width: 70%" name="body"> </textarea-->
+            {% for field in form %}
+                {% if field.label == "Body" %}
+                <label style="width:150px">Body</label> 
+                <textarea rows="5" style="width: 70%" name="body"> </textarea>
+                {% else %}
+                    <label class="control-label" id="{{field.html_name}}">{{ field.label }}</label>
+                    {{ field }}
+                {% endif %}
+            {% endfor %}
+        </p>
+        <input type="submit" class="btn btn-primary" type="button" value="Submit" />
+    </form>
+   
+{% endblock %}
+
+{% block super_js %}
+    <script type="text/javascript" src="/static/jquery-validation-1.9.0/jquery.validate.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready( function() {
+            $("#pill-home").addClass("active");
+            $("#announcementForm").validate({
+                rules: {
+                    title: {
+                        required: true
+                    },
+                    body: {
+                        required: true
+                    },
+                    entry: {
+                        required: true
+                    }
+                }
+            })
+        })
+    </script>
+
+{% endblock %}

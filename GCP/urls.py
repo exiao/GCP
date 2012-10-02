@@ -17,7 +17,7 @@ urlpatterns = patterns('gcpapp.views',
     url(r'^logout/$', 'logout', name='logout'),
     
     #SUPERUSER SECTION
-    url(r'^superuser/$', 'superuser', name='superuser'),
+    url(r'^superuser/$', 'superuser_content', name='superuser'),
     url(r'^superuser/verify/$', 'superuser_verify', name='superuser_verify'),
     url(r'^superuser/academic_year/$', 'superuser_academic_year', name='superuser_academic_year'),
     url(r'^superuser/questions/$', 'superuser_questions', name='superuser_questions'),

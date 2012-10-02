@@ -5,6 +5,7 @@ from django.core import serializers
 from django.utils import simplejson
 from django.contrib.auth.decorators import login_required
 from gcpapp.models import *
+from django.core.context_processors import csrf
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
@@ -15,8 +16,17 @@ from django.db.models import Max, Sum
 import datetime
 
 def home(request):
-    return render_to_response('home.html', context_instance=RequestContext(request))
-    
+    try:
+        announcements = Announcement.objects.order_by('-pk')
+        top = announcements.filter(entry__title = 'Top')[0]
+        bottom_left = announcements.filter(entry__title = 'Bottom Left')[0]
+        bottom_mid = announcements.filter(entry__title = 'Bottom Middle')[0]
+        bottom_right = announcements.filter(entry__title = 'Bottom Right')[0]
+        data = {'top':top,'bottom_left':bottom_left,'bottom_mid':bottom_mid,'bottom_right':bottom_right}
+        return render_to_response('home.html', data, context_instance=RequestContext(request))
+    except:
+        return render_to_response('home_orig.html', context_instance=RequestContext(request))
+        
 def green_groups(request):
     verified_users = User.objects.filter(is_staff=False,is_superuser=False,is_active=True)
     return render_to_response('green_groups.html', {'verified_users':verified_users},context_instance=RequestContext(request))
@@ -347,7 +357,33 @@ def superuser_finance_delete(request):
                 finance_request.save()
 
         return redirect('superuser_finance')
-        
+
+@login_required
+def superuser_content(request):
+    data = {}
+    if request.user.is_superuser == False:
+        return HttpResponseRedirect('/')
+    if request.method == 'POST':
+        if request.POST.__contains__('delete_announcement'):
+            announcement_id = request.POST['delete_announcement']
+            Announcement.objects.get(pk=announcement_id).delete()
+            return HttpResponseRedirect('.')
+        form = AnnouncementForm(request.POST)
+        #print(request.POST)
+        if form.is_valid():
+            model = form.save()
+            return HttpResponseRedirect('.')
+        else:
+            return HttpResponseRedirect('.')
+    else:
+        form = AnnouncementForm()
+        announcements = Announcement.objects.order_by('-timestamp')
+        data['announcements'] = announcements
+        data['form'] = form
+        for field in form:
+            print(field.label)
+        data.update(csrf(request))
+        return render_to_response('superuser/superuser_content.html',data,context_instance=RequestContext(request))
         
 @login_required
 def staff(request):

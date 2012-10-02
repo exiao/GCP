@@ -63,7 +63,7 @@
                     {% endif %}
                     {% if user.is_authenticated %}
                         <li id="account-nav"><a href="{% url account_profile %}"><i class="icon-cog"></i> Account</a></li>
-                        <a href="/logout/" class="btn btn-success" style="margin-left: 5px;"> Log out </a>
+                        <li><a href="/logout/" style="margin-left: 5px;"> Log out </a></li>
                     {% else %}
                         <div class="btn-group">
                             <a href="{% url login %}" class="btn"> Log In </a>
