@@ -39,7 +39,7 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput , label="Password")
 
 def content_file_name(instance, filename):
-    return '/'.join([ instance.user.username,filename])
+    return '/'.join(['users', instance.user.username,filename])
 
 class Folder(models.Model):
     user = models.ForeignKey(User)
@@ -70,7 +70,8 @@ class File(models.Model):
 
 class Image(models.Model):
     name = models.CharField(max_length=50)
-    image = models.ImageField(upload_to=content_file_name)
+    section = models.CharField(max_length=50,null=True)
+    image = models.ImageField(upload_to="images")
     timestamp = models.DateTimeField(auto_now_add=True,null=True)
     def __unicode__(self):
         return self.name

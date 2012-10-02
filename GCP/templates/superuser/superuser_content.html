@@ -39,9 +39,10 @@
             {% endfor %}
         </tbody>
     </table>
+    </form>
     
     <form action="." method="post" id="announcementForm">{% csrf_token %}
-        <h4>Add New Announcement</h4>
+        <h4>Edit Announcements</h4>
         <p>
             <!--label style="width:150px">Title</label><input name="title" type="text" />
             <br>
@@ -57,6 +58,23 @@
             {% endfor %}
         </p>
         <input type="submit" class="btn btn-primary" type="button" value="Submit" />
+    </form>
+    
+    <hr>
+    
+    <h2> Current Slideshow Photos </h2>
+    {% for image in images %}
+    <a href="{{ image.image.url }}"> {{image.name}} </a><br>
+    {% endfor %}
+    <form action="." method="post" class="well" id="imageForm" enctype="multipart/form-data">{% csrf_token %}
+        <h4>Add Photo</h4>
+        
+        <label class="control-label" id="photo_label">Photo Name</label>
+        <input name="photo_name" type="text" /><br>
+        <label class="control-label" id="photo_upload">Upload</label>
+        <input id="image-input" name="image" type="file"> <br><br>
+        
+        <input type="submit" class="btn btn-primary"  value="Submit" />
     </form>
    
 {% endblock %}
@@ -78,7 +96,17 @@
                         required: true
                     }
                 }
-            })
+            });
+            $("#imageForm").validate({
+                rules: {
+                    image: {
+                        required: true
+                    },
+                    photo_name: {
+                        required: true
+                    },
+                }
+            });
         })
     </script>
 

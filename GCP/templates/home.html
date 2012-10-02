@@ -47,7 +47,7 @@ font-family: 'Trebuchet MS', Helvetica, sans-serif;text-shadow:0 0 0.2em white;"
               </div>
               
               <div id="myCarousel" class="carousel slide set-image-dimension" style="float:left; margin-bottom: 0;">
-                <!-- Carousel items -->
+                <!-- Carousel items --
                 <div class="carousel-inner">
                     <div class="active item">
                         <img class="set-image-dimension" src="/static/cat.jpg" alt="">
@@ -70,6 +70,15 @@ font-family: 'Trebuchet MS', Helvetica, sans-serif;text-shadow:0 0 0.2em white;"
                           <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
                         </div>
                     </div>
+                </div>
+                -->
+                <div class="carousel-inner">
+                    {% for image in images %}
+                    
+                    <div class="item">
+                        <img class="set-image-dimension" src="{{ image.image.url }}" alt="">
+                    </div>
+                    {% endfor %}
                 </div>
                 
                 <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>

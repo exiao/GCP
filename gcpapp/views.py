@@ -15,17 +15,24 @@ from settings import EMAIL_HOST_USER
 from django.db.models import Max, Sum
 import datetime
 
-def home(request):
+def home(request):   
+    data={}
+    images = Image.objects.filter(section="homepage_slideshow")
+    data['images'] = images
     try:
         announcements = Announcement.objects.order_by('-pk')
         top = announcements.filter(entry__title = 'Top')[0]
         bottom_left = announcements.filter(entry__title = 'Bottom Left')[0]
         bottom_mid = announcements.filter(entry__title = 'Bottom Middle')[0]
         bottom_right = announcements.filter(entry__title = 'Bottom Right')[0]
-        data = {'top':top,'bottom_left':bottom_left,'bottom_mid':bottom_mid,'bottom_right':bottom_right}
+        data['top'] = top
+        data['bottom_left'] = bottom_left
+        data['bottom_mid'] = bottom_mid
+        data['bottom_right'] = bottom_right
+        
         return render_to_response('home.html', data, context_instance=RequestContext(request))
     except:
-        return render_to_response('home_orig.html', context_instance=RequestContext(request))
+        return render_to_response('home_orig.html',data, context_instance=RequestContext(request))
         
 def green_groups(request):
     verified_users = User.objects.filter(is_staff=False,is_superuser=False,is_active=True)
@@ -396,6 +403,11 @@ def superuser_content(request):
             announcement_id = request.POST['delete_announcement']
             Announcement.objects.get(pk=announcement_id).delete()
             return HttpResponseRedirect('.')
+        elif request.POST.__contains__('photo_name'):
+            photo_name = request.POST['photo_name']
+            image = request.FILES['image']
+            obj = Image.objects.create(image=image,name=str(photo_name),section="homepage_slideshow")
+            return redirect('/superuser/?message=%s' % "Image uploaded!")
         form = AnnouncementForm(request.POST)
         #print(request.POST)
         if form.is_valid():
@@ -404,10 +416,13 @@ def superuser_content(request):
         else:
             return HttpResponseRedirect('.')
     else:
+        if request.GET.__contains__('message'):
+            data['message'] = request.GET['message']
         form = AnnouncementForm()
         announcements = Announcement.objects.order_by('-timestamp')
         data['announcements'] = announcements
         data['form'] = form
+        data['images'] = Image.objects.filter(section="homepage_slideshow")
         for field in form:
             print(field.label)
         data.update(csrf(request))
