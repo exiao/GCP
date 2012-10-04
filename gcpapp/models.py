@@ -137,20 +137,16 @@ class Announcement(models.Model):
     body = models.TextField(default="")
     timestamp = models.DateTimeField(auto_now_add=True,null=True)
     #images = models.ManyToManyField("Image")
-    entry = models.ForeignKey("Entry")
-    def __unicode__(self):
-        return self.title
-
-class Entry(models.Model):
-    title = models.CharField(max_length=50)
+    entry = models.CharField(max_length=50)
     def __unicode__(self):
         return self.title
 
 class AnnouncementForm(ModelForm):
     class Meta:
         model = Announcement
+        exclude = ('entry')
 
-AnnouncementFormSet = modelformset_factory(Announcement, max_num=0)
+AnnouncementFormSet = modelformset_factory(Announcement, max_num=0, exclude=('entry',))
 
 class FinanceRequest(models.Model):
     user = models.ForeignKey(User)
