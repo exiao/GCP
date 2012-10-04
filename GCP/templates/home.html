@@ -22,7 +22,7 @@ body {
         <div class="index-slogan" style="float: left; padding-left:20px;">
             <h1 style="letter-spacing:-1px;color: #026440;
 font-family: 'Trebuchet MS', Helvetica, sans-serif;text-shadow:0 0 0.2em white;">ASUC Green Certification Program<br>
-                <h2 >Sustainability for the future TESTING TESTY TEST</h2>
+                <h2 >Sustainability for the future</h2>
             </h1>
         </div>
     </div>
@@ -40,7 +40,7 @@ font-family: 'Trebuchet MS', Helvetica, sans-serif;text-shadow:0 0 0.2em white;"
             <div class="middle-banner" >
               <div id="home-announcement">
                 <h2 style="font-family: 'Proxima Nova', 'proxima-nova', 'Helvetica Neue', Helvetica, sans-serif; text-align:center; letter-spacing: -1px; border-bottom: 1px solid black"> {{ top.title }} </h2>
-                <p>
+                <p style="white-space: pre-wrap;">
                 {{ top.body }}
                 </p>
                 
@@ -73,12 +73,26 @@ font-family: 'Trebuchet MS', Helvetica, sans-serif;text-shadow:0 0 0.2em white;"
                 </div>
                 -->
                 <div class="carousel-inner">
-                    {% for image in images %}
                     
-                    <div class="item">
-                        <img class="set-image-dimension" src="{{ image.image.url }}" alt="">
+                    {% for image in images %}
+                
+                    {% if forloop.first %}
+                        <div class="active item">
+                    {% else %}
+                        <div class="item">
+                    {% endif %}
+                    <img class="set-image-dimension" src="{{ image.image.url }}" alt="...">
+                    
+                    {% if image.description %}
+                    <div class="carousel-caption">
+                      <p style="white-space: pre-wrap"> {{ image.description }} </p>
                     </div>
+                    {% endif %}
+                    
+                    </div>
+                    
                     {% endfor %}
+                    
                 </div>
                 
                 <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
