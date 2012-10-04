@@ -15,6 +15,7 @@ from settings import EMAIL_HOST_USER
 from django.db.models import Max, Sum
 import datetime
 
+
 def home(request):   
     data={}
     images = Image.objects.filter(section="homepage_slideshow")
@@ -398,6 +399,13 @@ def superuser_content(request):
     data = {}
     if request.user.is_superuser == False:
         return HttpResponseRedirect('/')
+        
+    top = Announcement.objects.get_or_create(entry__title='Top')
+    bot_left = Announcement.objects.get_or_create(entry__title='Bottom Left')
+    bot_mid = Announcement.objects.get_or_create(entry__title='Bottom Middle')
+    bot_right = Announcement.objects.get_or_create(entry__title='Bottom Right')
+    models = [top[0], bot_left[0], bot_mid[0], bot_right[0]]
+    
     if request.method == 'POST':
         if request.POST.__contains__('delete_announcement'):
             announcement_id = request.POST['delete_announcement']
@@ -413,7 +421,13 @@ def superuser_content(request):
             image_id = request.POST['delete_image_id']
             Image.objects.get(id=int(image_id)).delete()
             return redirect('/superuser/?message=%s' % "Image deleted!")
-        form = AnnouncementForm(request.POST)
+        
+
+        formset = AnnouncementFormSet(request.POST)
+        if formset.is_valid():
+            instances = formset.save()
+        return HttpResponseRedirect('.')
+        #form = AnnouncementForm(request.POST)
         #print(request.POST)
         if form.is_valid():
             model = form.save()
@@ -423,13 +437,12 @@ def superuser_content(request):
     else:
         if request.GET.__contains__('message'):
             data['message'] = request.GET['message']
-        form = AnnouncementForm()
-        announcements = Announcement.objects.order_by('-timestamp')
-        data['announcements'] = announcements
-        data['form'] = form
+        
+        formset = AnnouncementFormSet()
+        for form in formset:
+            print(form)
+        data['forms'] = formset
         data['images'] = Image.objects.filter(section="homepage_slideshow")
-        for field in form:
-            print(field.label)
         data.update(csrf(request))
         return render_to_response('superuser/superuser_content.html',data,context_instance=RequestContext(request))
         

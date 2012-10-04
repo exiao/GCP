@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django import forms
 from django.db.models.signals import post_save
 from django.forms import ModelForm
-
+from django.forms.models import modelformset_factory
 
 class UserProfile(models.Model):
     # This field is required.
@@ -138,6 +138,8 @@ class Announcement(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True,null=True)
     #images = models.ManyToManyField("Image")
     entry = models.ForeignKey("Entry")
+    def __unicode__(self):
+        return self.title
 
 class Entry(models.Model):
     title = models.CharField(max_length=50)
@@ -148,6 +150,7 @@ class AnnouncementForm(ModelForm):
     class Meta:
         model = Announcement
 
+AnnouncementFormSet = modelformset_factory(Announcement, max_num=0)
 
 class FinanceRequest(models.Model):
     user = models.ForeignKey(User)
