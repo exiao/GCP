@@ -400,11 +400,11 @@ def superuser_content(request):
     if request.user.is_superuser == False:
         return HttpResponseRedirect('/')
         
-    top = Announcement.objects.get_or_create(entry__title='Top')
-    bot_left = Announcement.objects.get_or_create(entry__title='Bottom Left')
-    bot_mid = Announcement.objects.get_or_create(entry__title='Bottom Middle')
-    bot_right = Announcement.objects.get_or_create(entry__title='Bottom Right')
-    models = [top[0], bot_left[0], bot_mid[0], bot_right[0]]
+    #top = Announcement.objects.get_or_create(entry__title='Top')
+    #bot_left = Announcement.objects.get_or_create(entry__title='Bottom Left')
+    #bot_mid = Announcement.objects.get_or_create(entry__title='Bottom Middle')
+    #bot_right = Announcement.objects.get_or_create(entry__title='Bottom Right')
+    #models = [top[0], bot_left[0], bot_mid[0], bot_right[0]]
     
     if request.method == 'POST':
         if request.POST.__contains__('delete_announcement'):
@@ -427,13 +427,6 @@ def superuser_content(request):
         if formset.is_valid():
             instances = formset.save()
         return HttpResponseRedirect('.')
-        #form = AnnouncementForm(request.POST)
-        #print(request.POST)
-        if form.is_valid():
-            model = form.save()
-            return HttpResponseRedirect('.')
-        else:
-            return HttpResponseRedirect('.')
     else:
         if request.GET.__contains__('message'):
             data['message'] = request.GET['message']
