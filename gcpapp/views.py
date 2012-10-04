@@ -22,10 +22,10 @@ def home(request):
     data['images'] = images
     try:
         announcements = Announcement.objects.order_by('-pk')
-        top = announcements.filter(entry__title = 'Top')[0]
-        bottom_left = announcements.filter(entry__title = 'Bottom Left')[0]
-        bottom_mid = announcements.filter(entry__title = 'Bottom Middle')[0]
-        bottom_right = announcements.filter(entry__title = 'Bottom Right')[0]
+        top = announcements.get(entry = 'Top')
+        bottom_left = announcements.get(entry = 'Bottom Left')
+        bottom_mid = announcements.get(entry = 'Bottom Middle')
+        bottom_right = announcements.get(entry = 'Bottom Right')
         data['top'] = top
         data['bottom_left'] = bottom_left
         data['bottom_mid'] = bottom_mid
@@ -399,11 +399,11 @@ def superuser_content(request):
     data = {}
     if request.user.is_superuser == False:
         return HttpResponseRedirect('/')
-        
-    #top = Announcement.objects.get_or_create(entry__title='Top')
-    #bot_left = Announcement.objects.get_or_create(entry__title='Bottom Left')
-    #bot_mid = Announcement.objects.get_or_create(entry__title='Bottom Middle')
-    #bot_right = Announcement.objects.get_or_create(entry__title='Bottom Right')
+
+    top = Announcement.objects.get_or_create(entry='Top')
+    bot_left = Announcement.objects.get_or_create(entry='Bottom Left')
+    bot_mid = Announcement.objects.get_or_create(entry='Bottom Middle')
+    bot_right = Announcement.objects.get_or_create(entry='Bottom Right')
     #models = [top[0], bot_left[0], bot_mid[0], bot_right[0]]
     
     if request.method == 'POST':
