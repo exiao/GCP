@@ -1,0 +1,105 @@
+{% extends "superuser/superuser.html" %}
+
+{% block title %} Admin - Checklist Questions{% endblock %}
+
+{% block super_content %}
+    {% if message %}
+        <p style="color:red">{{ message }}</p>
+    {% endif %}
+    <h2> Checklist Options </h2>
+    <a href={% url superuser_questions %}> Return to questions </a><br><br>
+
+    <form action="." method="post" id="questionForm">{% csrf_token %}
+        <h4>Add New Question</h4>
+        <p>
+            <label style="width:150px">Question</label> <textarea rows="5" style="width: 70%" name="question_text"></textarea>
+            <br>
+            <label style="width:150px">Points Value</label> <input name="point_value" type="text" />
+            <br>
+            <label style="width:150px">Question Group</label>
+            <select name="question_group_id">
+              {% for question_group in question_groups %}
+                <option value="{{ question_group.id }}">{{ question_group.title }}</option>
+              {% endfor %}
+            </select>
+        </p>
+        <input type="submit" class="btn btn-primary" type="button" value="Submit" />
+    </form>
+    <hr>
+    
+    <form action="." method="post" id="questionGroupForm">{% csrf_token %}
+        <h4>Add New Question Group</h4>
+        <p>
+            <label style="width:150px">Question Group Name</label> <input style="width: 500px;" type="text" name="question_group" />
+        </p>
+        <input type="submit" class="btn btn-primary" type="button" value="Submit" />
+    </form>
+    <hr>
+    
+    <form action="." method="post" onsubmit="return verifyDeleteGroup();" id="deleteQuestionGroupForm">{% csrf_token %}
+        <h4>Delete Question Group</h4>
+        <p>
+            <select name="delete_question_group_id" id="delete_group">
+              {% for question_group in question_groups %}
+                <option value="{{ question_group.id }}">{{ question_group.title }}</option>
+              {% endfor %}
+            </select>
+        </p>
+        <input type="submit" class="btn btn-danger" type="button" value="Delete" />
+    </form>
+{% endblock %}
+
+{% block super_js %}
+    <script type="text/javascript" src="/static/jquery-validation-1.9.0/jquery.validate.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready( function() {
+            $("#pill-questions").addClass("active");
+            $("#questionForm").validate({
+                rules: {
+                    point_value: {
+                        required: true,
+                        number:true
+                    },
+                    question_text: {
+                        required: true
+                    },
+                    question_group_id: {
+                        required:true,
+                        message: "A",
+                    }
+                }
+            })
+            $("#questionGroupForm").validate({
+                rules: {
+                    question_group: {
+                        required: true,
+                        maxlength: 100,
+                    }
+                }
+            })
+            
+            $("#deleteQuestionGroupForm").validate({
+                rules: {
+                    delete_question_group_id: {
+                        required: true,
+                    }
+                }
+            })
+        })
+        
+        function verifyDeleteGroup() {
+            var delete_group_id = $("#delete_group").val();
+            var delete_group_name = groupIdToName(delete_group_id);
+            return confirm('WARNING: Are you sure you want to delete the group: "'+delete_group_name+'". All question and data under this group will be lost FOREVER!')
+        }
+        
+        function groupIdToName(id) {
+            var idDict = {}
+            {% for question_group in question_groups %}
+                idDict['{{ question_group.id }}'] = "{{ question_group.title }}"
+            {% endfor %}
+            return idDict[id]
+        }
+    </script>
+
+{% endblock %}

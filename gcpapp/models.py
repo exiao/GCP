@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django import forms
 from django.db.models.signals import post_save
 from django.forms import ModelForm
-
+from django.forms.models import modelformset_factory
 
 class UserProfile(models.Model):
     # This field is required.
@@ -16,14 +16,14 @@ class UserProfile(models.Model):
     base_folder = models.ForeignKey("Folder",null=True)
     delete_me = models.BooleanField(default=False)
     group_description = models.TextField()
-    
+
     #if user is an admin
     my_groups = models.ManyToManyField(User,related_name="my_groups_set")
-    
+
     def delete(self, *args, **kwargs):
         self.base_folder.delete()
         super(UserProfile, self).delete(*args, **kwargs)
-    
+
 class UserForm(forms.Form):
     username = forms.CharField(max_length=30)
     group_name = forms.CharField(max_length=70)
@@ -33,14 +33,14 @@ class UserForm(forms.Form):
     academic_start_year = forms.IntegerField()
     password = forms.CharField(widget=forms.PasswordInput , label="Password")
     password_again = forms.CharField( widget=forms.PasswordInput, label="Password (again)" )
-    
+
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=30)
     password = forms.CharField(widget=forms.PasswordInput , label="Password")
-    
+
 def content_file_name(instance, filename):
-    return '/'.join([ instance.user.username,filename])
-    
+    return '/'.join(['users', instance.user.username,filename])
+
 class Folder(models.Model):
     user = models.ForeignKey(User)
     name = models.CharField(max_length=50)
@@ -56,7 +56,7 @@ class Folder(models.Model):
         super(Folder, self).delete(*args, **kwargs)
     def __unicode__(self):
         return self.name
-    
+
 class File(models.Model):
     user = models.ForeignKey(User)
     name = models.CharField(max_length=50)
@@ -68,6 +68,18 @@ class File(models.Model):
         self.file.delete()
         super(File, self).delete(*args, **kwargs)
 
+class Image(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.TextField(null=True,blank=True)
+    section = models.CharField(max_length=50,null=True)
+    image = models.ImageField(upload_to="images")
+    timestamp = models.DateTimeField(auto_now_add=True,null=True)
+    def __unicode__(self):
+        return self.name
+    def delete(self, *args, **kwargs):
+        self.image.delete()
+        super(Image, self).delete(*args, **kwargs)
+
 class AcademicYear(models.Model):
     year = models.IntegerField(unique=True)
     def __unicode__(self):
@@ -76,10 +88,13 @@ class AcademicYear(models.Model):
 class QuestionBase(models.Model):
     question_text = models.TextField()
     point_value = models.IntegerField()
+    
     def delete(self, *args, **kwargs):
         for question in self.question_base.all():
             question.delete()
         super(QuestionBase, self).delete(*args, **kwargs)
+    def __unicode__(self):
+        return self.question_text
 
 class Question(models.Model):
     #AcademicYear.objects.filter(year=2012).aggregate(Sum('year'))
@@ -96,7 +111,19 @@ class Question(models.Model):
         for file in self.files.all():
             file.delete()
         super(Question, self).delete(*args, **kwargs)
+    def __unicode__(self):
+        return self.question_base.question_text
 
+class QuestionGroup(models.Model):
+    title = models.CharField(max_length=100)
+    question_bases = models.ManyToManyField("QuestionBase")
+    def delete(self, *args, **kwargs):
+        for question in self.question_bases.all():
+            question.delete()
+        super(QuestionGroup, self).delete(*args, **kwargs)
+    def __unicode__(self):
+        return self.title
+        
 class Checklist(models.Model):
     user = models.ForeignKey(User)
     questions = models.ManyToManyField("Question")
@@ -104,7 +131,27 @@ class Checklist(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True,null=True)
     def __unicode__(self):
         return str(self.user) + "-" + str(self.academic_year.year)
-        
+
+class Announcement(models.Model):
+    title = models.CharField(max_length=50)
+    body = models.TextField(default="")
+    timestamp = models.DateTimeField(auto_now_add=True,null=True)
+    #images = models.ManyToManyField("Image")
+    entry = models.ForeignKey("Entry")
+    def __unicode__(self):
+        return self.title
+
+class Entry(models.Model):
+    title = models.CharField(max_length=50)
+    def __unicode__(self):
+        return self.title
+
+class AnnouncementForm(ModelForm):
+    class Meta:
+        model = Announcement
+
+AnnouncementFormSet = modelformset_factory(Announcement, max_num=0)
+
 class FinanceRequest(models.Model):
     user = models.ForeignKey(User)
     title = models.CharField(max_length=40)
@@ -115,13 +162,13 @@ class FinanceRequest(models.Model):
     is_answered = models.BooleanField(default=False) #whether or not an admin responded
     admin_deleted = models.BooleanField(default=False)
     user_deleted = models.BooleanField(default=False)
-    
+
 class FinanceRequestForm(ModelForm):
     class Meta:
         model = FinanceRequest
         exclude = ('user','is_approved','is_answered','admin_deleted','user_deleted')
 
-    
+
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         folder = Folder.objects.create(user=instance,name='Base')
@@ -137,6 +184,6 @@ def create_user_profile(sender, instance, created, **kwargs):
         if instance.is_superuser:
             for user in User.objects.filter(is_staff=False):
                 profile.my_groups.add(user)
-        
-        
+
+
 post_save.connect(create_user_profile, sender=User)

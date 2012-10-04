@@ -105,8 +105,8 @@
             }
             
             //safeguard from deleting all superusers
-            var selected_supers = $(".superuser input:checked").length;
-            var all_supers = $(".superuser input").length;
+            var selected_supers = $("input.superuser:checked").length;
+            var all_supers = $("input.superuser").length;
             if (selected_supers === all_supers) {
                 alert("You can't delete superusers to the point where you have none. You MUST have at least one existing.");
                 return false;

@@ -5,6 +5,7 @@ from django.core import serializers
 from django.utils import simplejson
 from django.contrib.auth.decorators import login_required
 from gcpapp.models import *
+from django.core.context_processors import csrf
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
@@ -14,9 +15,26 @@ from settings import EMAIL_HOST_USER
 from django.db.models import Max, Sum
 import datetime
 
-def home(request):
-    return render_to_response('home.html', context_instance=RequestContext(request))
-    
+
+def home(request):   
+    data={}
+    images = Image.objects.filter(section="homepage_slideshow")
+    data['images'] = images
+    try:
+        announcements = Announcement.objects.order_by('-pk')
+        top = announcements.filter(entry__title = 'Top')[0]
+        bottom_left = announcements.filter(entry__title = 'Bottom Left')[0]
+        bottom_mid = announcements.filter(entry__title = 'Bottom Middle')[0]
+        bottom_right = announcements.filter(entry__title = 'Bottom Right')[0]
+        data['top'] = top
+        data['bottom_left'] = bottom_left
+        data['bottom_mid'] = bottom_mid
+        data['bottom_right'] = bottom_right
+        
+        return render_to_response('home.html', data, context_instance=RequestContext(request))
+    except:
+        return render_to_response('home_orig.html',data, context_instance=RequestContext(request))
+        
 def green_groups(request):
     verified_users = User.objects.filter(is_staff=False,is_superuser=False,is_active=True)
     return render_to_response('green_groups.html', {'verified_users':verified_users},context_instance=RequestContext(request))
@@ -185,27 +203,54 @@ def superuser_questions(request):
 
     if request.method == "GET":
         data = {}
+        question_groups = QuestionGroup.objects.all()
+        data['question_groups'] = question_groups
         questions = QuestionBase.objects.all()
         data['questions'] = questions
         if request.GET.__contains__("message"):
             data['message'] = request.GET['message']
         return render_to_response('superuser/superuser_questions.html',data, context_instance=RequestContext(request))
     else:
+        if request.POST.__contains__('delete_question_base'):
+            question_base_id = request.POST['delete_question_base']
+            QuestionBase.objects.get(id=question_base_id).delete()
+            message = "Question deleted."
+            return redirect('/superuser/questions/?message=%s' % message)
+
+            
+@login_required
+def superuser_questions_edit(request):
+    if request.user.is_superuser == False:
+        return HttpResponseRedirect('/')
+    if request.method == "GET":
+        data = {}
+        question_groups = QuestionGroup.objects.all()
+        data['question_groups'] = question_groups
+        return render_to_response('superuser/superuser_questions_edit.html',data, context_instance=RequestContext(request))
+    else:
         if request.POST.__contains__('question_text'):
             question_text = request.POST['question_text']
             point_value = request.POST['point_value']
+            question_group_id = request.POST['question_group_id']
             object,is_created = QuestionBase.objects.get_or_create(question_text=question_text, point_value=point_value)
+            question_group = QuestionGroup.objects.get(id=int(question_group_id))
+            question_group.question_bases.add(object)
             if is_created:
                 message = "Question successfully created!"
             else:
                 message = "That question and point value already exist."
             return redirect('/superuser/questions/?message=%s' % message)
-        elif request.POST.__contains__('delete_question_base'):
-            question_base_id = request.POST['delete_question_base']
-            QuestionBase.objects.get(id=question_base_id).delete()
-            message = "Question deleted."
+        elif request.POST.__contains__('question_group'):
+            question_group = request.POST['question_group']
+            QuestionGroup.objects.create(title=question_group)
+            message = "Question Group Created!"
             return redirect('/superuser/questions/?message=%s' % message)
-            
+        elif request.POST.__contains__('delete_question_group_id'):
+            question_group_id = request.POST['delete_question_group_id']
+            QuestionGroup.objects.get(id=int(question_group_id)).delete()
+            message = "Question Group Deleted!"
+            return redirect('/superuser/questions/?message=%s' % message)   
+     
 @login_required
 def superuser_staff(request):
     data = {}
@@ -217,6 +262,7 @@ def superuser_staff(request):
             
         data['staff_members'] = User.objects.filter(is_staff=True,is_superuser=False)
         return render_to_response('superuser/superuser_staff.html',data, context_instance=RequestContext(request))
+    
         
 @login_required
 def superuser_staff_user(request,user_id):
@@ -347,7 +393,58 @@ def superuser_finance_delete(request):
                 finance_request.save()
 
         return redirect('superuser_finance')
+
+@login_required
+def superuser_content(request):
+    data = {}
+    if request.user.is_superuser == False:
+        return HttpResponseRedirect('/')
         
+    top = Announcement.objects.get_or_create(entry__title='Top')
+    bot_left = Announcement.objects.get_or_create(entry__title='Bottom Left')
+    bot_mid = Announcement.objects.get_or_create(entry__title='Bottom Middle')
+    bot_right = Announcement.objects.get_or_create(entry__title='Bottom Right')
+    models = [top[0], bot_left[0], bot_mid[0], bot_right[0]]
+    
+    if request.method == 'POST':
+        if request.POST.__contains__('delete_announcement'):
+            announcement_id = request.POST['delete_announcement']
+            Announcement.objects.get(pk=announcement_id).delete()
+            return HttpResponseRedirect('.')
+        elif request.POST.__contains__('photo_name'):
+            photo_name = request.POST['photo_name']
+            description = request.POST['description']
+            image = request.FILES['image']
+            obj = Image.objects.create(image=image,name=photo_name,description=description,section="homepage_slideshow")
+            return redirect('/superuser/?message=%s' % "Image uploaded!")
+        elif request.POST.__contains__('delete_image_id'):
+            image_id = request.POST['delete_image_id']
+            Image.objects.get(id=int(image_id)).delete()
+            return redirect('/superuser/?message=%s' % "Image deleted!")
+        
+
+        formset = AnnouncementFormSet(request.POST)
+        if formset.is_valid():
+            instances = formset.save()
+        return HttpResponseRedirect('.')
+        #form = AnnouncementForm(request.POST)
+        #print(request.POST)
+        if form.is_valid():
+            model = form.save()
+            return HttpResponseRedirect('.')
+        else:
+            return HttpResponseRedirect('.')
+    else:
+        if request.GET.__contains__('message'):
+            data['message'] = request.GET['message']
+        
+        formset = AnnouncementFormSet()
+        for form in formset:
+            print(form)
+        data['forms'] = formset
+        data['images'] = Image.objects.filter(section="homepage_slideshow")
+        data.update(csrf(request))
+        return render_to_response('superuser/superuser_content.html',data,context_instance=RequestContext(request))
         
 @login_required
 def staff(request):
@@ -553,6 +650,7 @@ def checklist_work(request,year,checklist_user):
                 checklist.questions.add(question)
 
         questions = checklist.questions.all()
+        data['question_groups'] = QuestionGroup.objects.all()
         data['questions'] = questions
         data['checklist'] = checklist
         data['all_years'] = AcademicYear.objects.all().order_by('year')
@@ -610,6 +708,8 @@ def account_finance_request(request):
     if request.method == "GET":
         my_finance_requests = FinanceRequest.objects.filter(user=request.user,user_deleted=False).order_by('-timestamp')
         data['my_finance_requests'] = my_finance_requests
+        if request.GET.__contains__('message'):
+            data['message'] = request.GET['message']
         return render_to_response('account/account_finance_request.html',data,context_instance=RequestContext(request))
     else:
         delete_list = request.POST.getlist("Delete")
@@ -640,7 +740,7 @@ def account_finance_request_create(request):
             fin.user = request.user
             fin.save()
             message = 'Your finance request has been sent. You will be notified through email with the response.'
-            return render_to_response('small_message.html',{'title':'Finance Request Sent','message':message}, context_instance=RequestContext(request))
+            return redirect('/account/finance_request/?message=%s' % message)
         else: #this shouldn't run as the front end will validate the form
             data['form'] = form
             return render_to_response('account/account_finance_request_create.html',data,context_instance=RequestContext(request))      

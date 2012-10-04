@@ -1,0 +1,121 @@
+{% extends "superuser/superuser.html" %}
+
+{% block title %} Admin - Content{% endblock %}
+
+{% block super_content %}
+    {% if message %}
+    <p style="color:red">{{ message }}</p>
+    {% endif %}
+    
+    <form action="." method="post" id="announcementForm" class="well">{% csrf_token %}
+        {{ forms.management_form }}
+        <caption><h4>Edit Announcements</h4></caption>
+        <p>
+            <!--label style="width:150px">Title</label><input name="title" type="text" />
+            <br>
+            <label style="width:150px">Body</label> <textarea rows="5" style="width: 70%" name="body"> </textarea-->
+            {% for form in forms %}
+                {{ form }}
+            <!--{% for field in form %}
+                {% if field.label == "Body" %}
+                <tr><th>
+                <label for="{{ field.auto_id }}" style="width:150px">Body</label> 
+                </th>
+                <td>
+                <textarea id="{{ field.auto_id }}" rows="5" style="width: 70%" name="{{ field.html_name}}">{{ field.value }} </textarea>
+                </td>
+                </tr>
+                {% elif field.label != "Id" %}
+                    <label class="control-label" id="{{field.html_name}}">{{ field.label }}</label>
+                    {{ field }}
+                {% endif %}
+            {% endfor %}!-->
+            {% endfor %}
+        </p>
+        <input type="submit" class="btn btn-primary" type="button" value="Submit" />
+    </form>
+    
+    <hr>
+ 
+    <table class="table table-bordered">
+        <caption><h2> Current Slideshow Photos </h2></caption>
+        <thead>
+            <tr>
+                <th style="width: 150px;"> Thumbnail</th>
+                <th> Name </th>
+                <th> Description </th>
+                <th style="width: 100px;">Delete </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for image in images %}
+            <tr>
+                <td> <img style="width:150px; height: 100px;" src="{{ image.image.url }}" alt=""> </td>
+                <td> <a href="{{ image.image.url }}"> {{image.name}} </a> </td>
+                <td><p style="white-space:pre-wrap;"> {{ image.description }} <p></td>
+                <form action="." method="post" onsubmit="return confirm('You are about to delete the image: {{ image.name }}')">{% csrf_token %}
+                <input type="hidden" name="delete_image_id" value="{{ image.id }}" />
+                    <td>
+                        <input type="submit" class="btn btn-danger btn-small" value='Delete' />
+                    </td>
+                </form>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <form action="." method="post" class="well" id="imageForm" enctype="multipart/form-data">{% csrf_token %}
+        <h4>Add Photo</h4>
+        
+        <label class="control-label" id="photo_label">Photo Name</label>
+        <input name="photo_name" type="text" /><br>
+        
+        <label class="control-label" id="description_label">Description</label>
+        <textarea name="description" rows="5" style="width: 80%;"></textarea><br>
+        <span class="help-block">Leave description blank if you do not want a description in the slideshow.</span>
+        
+        <label class="control-label" id="photo_upload">Upload</label>
+        <input id="image-input" name="image" type="file"> <br><br>
+        <p> <b>Note</b>: <br>Images are in a width:height ratio of 7:4. So for the best looking images, they should be pre-formatted to have this ratio.<br>
+        Ideally it would be a 700px(width) by 400px(height) photo. But any photo of this ratio will work (e.g. 1400px by 800px).</p>
+        <br>
+        
+        <input type="submit" class="btn btn-primary"  value="Submit" />
+    </form>
+   
+{% endblock %}
+
+{% block super_js %}
+    <script type="text/javascript" src="/static/jquery-validation-1.9.0/jquery.validate.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready( function() {
+            $("#pill-home").addClass("active");
+            $("#announcementForm").validate({
+                rules: {
+                    title: {
+                        required: true
+                    },
+                    body: {
+                        required: true
+                    },
+                    entry: {
+                        required: true
+                    }
+                }
+            });
+            $("#imageForm").validate({
+                rules: {
+                    image: {
+                        required: true
+                    },
+                    photo_name: {
+                        required: true
+                    },
+                }
+            });
+        })
+    </script>
+
+{% endblock %}

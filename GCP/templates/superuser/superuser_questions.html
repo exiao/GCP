@@ -6,18 +6,25 @@
     {% if message %}
         <p style="color:red">{{ message }}</p>
     {% endif %}
-
+    <a class="btn btn-success" href="./edit"> Checklist Options </a>
+    <br>
+    
+    {% if not question_groups %}
+        <h2> It seems you don't have any question groups. Click the checklist options button above and create a question group to get started! </h2>
+    {% endif %}
+    
+    {% for question_group in question_groups %}
     <table class="table table-bordered">
-        <caption><h2> Current checklist questions </h2></caption>
+        <caption><h2> {{ question_group.title }} </h2></caption>
         <thead>
         <tr>
             <th> Question</th>
             <th> Points </th>
-            <th> Delete</th>
+            <th style="width:100px;"> Delete</th>
         </tr>
         </thead>
         <tbody>
-        {% for question in questions %}
+        {% for question in question_group.question_bases.all %}
             <form action="." method="post" onsubmit="return confirm('You\'re going to lose all user related question data, are you sure you want to proceed?')">{% csrf_token %}
                 <input type="hidden" name="delete_question_base" value="{{ question.id }}" />
 
@@ -34,35 +41,15 @@
         {% endfor %}
         </tbody>
     </table>
-
-    <br>
-    <form action="." method="post" id="questionForm">{% csrf_token %}
-        <h4>Add New Question</h4>
-        <p>
-            <label style="width:150px">Question</label> <textarea rows="5" style="width: 70%" name="question_text"></textarea>
-            <br>
-            <label style="width:150px">Points Value</label> <input name="point_value" type="text" />
-        </p>
-        <input type="submit" class="btn btn-primary" type="button" value="Submit" />
-    </form>
+    {% endfor %}    
+    
+    
 {% endblock %}
 
 {% block super_js %}
-    <script type="text/javascript" src="/static/jquery-validation-1.9.0/jquery.validate.min.js"></script>
     <script type="text/javascript">
         $(document).ready( function() {
-            $("#pill-questions").addClass("active");
-            $("#questionForm").validate({
-                rules: {
-                    point_value: {
-                        required: true,
-                        number:true
-                    },
-                    question_text: {
-                        required: true
-                    }
-                }
-            })
+           $("#pill-questions").addClass("active");
         })
     </script>
 
