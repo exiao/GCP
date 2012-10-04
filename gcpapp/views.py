@@ -400,10 +400,10 @@ def superuser_content(request):
     if request.user.is_superuser == False:
         return HttpResponseRedirect('/')
 
-    top = Announcement.objects.get_or_create(entry='Top')
-    bot_left = Announcement.objects.get_or_create(entry='Bottom Left')
-    bot_mid = Announcement.objects.get_or_create(entry='Bottom Middle')
-    bot_right = Announcement.objects.get_or_create(entry='Bottom Right')
+    top = Announcement.objects.get_or_create(entry='Top')[0]
+    bot_left = Announcement.objects.get_or_create(entry='Bottom Left')[0]
+    bot_mid = Announcement.objects.get_or_create(entry='Bottom Middle')[0]
+    bot_right = Announcement.objects.get_or_create(entry='Bottom Right')[0]
     #models = [top[0], bot_left[0], bot_mid[0], bot_right[0]]
     
     if request.method == 'POST':
@@ -421,19 +421,22 @@ def superuser_content(request):
             image_id = request.POST['delete_image_id']
             Image.objects.get(id=int(image_id)).delete()
             return redirect('/superuser/?message=%s' % "Image deleted!")
-        
 
         formset = AnnouncementFormSet(request.POST)
         if formset.is_valid():
             instances = formset.save()
-        return HttpResponseRedirect('.')
+            return HttpResponseRedirect('.')
+        else:
+            print(formset)
     else:
         if request.GET.__contains__('message'):
             data['message'] = request.GET['message']
         
-        formset = AnnouncementFormSet()
-        for form in formset:
-            print(form)
+        formset = AnnouncementFormSet()  #queryset=Announcement.objects.order_by('pk').all())
+        data['top'] = top
+        data['bot_left'] = bot_left
+        data['bot_mid'] = bot_mid
+        data['bot_right'] = bot_right
         data['forms'] = formset
         data['images'] = Image.objects.filter(section="homepage_slideshow")
         data.update(csrf(request))

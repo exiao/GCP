@@ -133,8 +133,8 @@ class Checklist(models.Model):
         return str(self.user) + "-" + str(self.academic_year.year)
 
 class Announcement(models.Model):
-    title = models.CharField(max_length=50)
-    body = models.TextField(default="")
+    title = models.CharField(max_length=50, blank=True, null=True)
+    body = models.TextField(default="", blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True,null=True)
     #images = models.ManyToManyField("Image")
     entry = models.CharField(max_length=50)
@@ -144,7 +144,7 @@ class Announcement(models.Model):
 class AnnouncementForm(ModelForm):
     class Meta:
         model = Announcement
-        exclude = ('entry')
+        exclude = ('entry','timestamp')
 
 AnnouncementFormSet = modelformset_factory(Announcement, max_num=0, exclude=('entry',))
 

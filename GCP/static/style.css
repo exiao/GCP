@@ -408,3 +408,8 @@ textarea.readonly {
 .about-head {
     color: #27ac47;
 }
+
+.announcementBox {
+    width:47%;
+    float:left;
+}

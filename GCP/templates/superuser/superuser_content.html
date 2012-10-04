@@ -14,35 +14,43 @@
             <!--label style="width:150px">Title</label><input name="title" type="text" />
             <br>
             <label style="width:150px">Body</label> <textarea rows="5" style="width: 70%" name="body"> </textarea-->
-            {% for form in forms %}
-                {{ form }}
-            <!--{% for field in form %}
-                {% if field.label == "Body" %}
-                <tr><th>
-                <label for="{{ field.auto_id }}" style="width:150px">Body</label> 
-                </th>
-                <td>
-                <textarea id="{{ field.auto_id }}" rows="5" style="width: 70%" name="{{ field.html_name}}">{{ field.value }} </textarea>
-                </td>
-                </tr>
-                {% elif field.label != "Id" %}
-                    <label class="control-label" id="{{field.html_name}}">{{ field.label }}</label>
-                    {{ field }}
-                {% endif %}
-            {% endfor %}!-->
-            {% endfor %}
+        <div class="announcementBox">
+        <h5>Top</h5>
+        <label for="id_form-0-title">Title:</label><input id="id_form-0-title" type="text" name="form-0-title" value="{{ top.title }}" maxlength="50" />
+        <label for="id_form-0-body">Body:</label><textarea id="id_form-0-body" rows="10" cols="40" name="form-0-body">{{ top.body }}</textarea><input type="hidden" name="form-0-id" value="1" id="id_form-0-id" />
+        </div>
+
+        <div class="announcementBox">
+        <h5>Bottom Left</h5>
+        <label for="id_form-1-title">Title:</label><input id="id_form-1-title" type="text" name="form-1-title" value="{{ bot_left.title }}" maxlength="50" />
+        <label for="id_form-1-body">Body:</label><textarea id="id_form-1-body" rows="10" cols="40" name="form-1-body">{{ bot_left.body }}</textarea><input type="hidden" name="form-1-id" value="2" id="id_form-1-id" />
+        </div>
+
+        <div class="announcementBox">
+        <h5>Bottom Middle</h5>
+        <label for="id_form-2-title">Title:</label><input id="id_form-2-title" type="text" name="form-2-title" value="{{ bot_mid.title }}" maxlength="50" />
+        <label for="id_form-2-body">Body:</label><textarea id="id_form-2-body" rows="10" cols="40" name="form-2-body">{{ bot_mid.body }}</textarea><input type="hidden" name="form-2-id" value="3" id="id_form-2-id" />
+        </div>
+
+        <div class="announcementBox">
+        <h5>Bottom Right</h5>
+        <label for="id_form-3-title">Title:</label><input id="id_form-3-title" type="text" name="form-3-title" value="{{ bot_right.title }}" maxlength="50" />
+        <label for="id_form-3-body">Body:</label><textarea id="id_form-3-body" rows="10" cols="40" name="form-3-body">{{ bot_right.body }}</textarea><input type="hidden" name="form-3-id" value="4" id="id_form-3-id" />
+        </div>
+
         </p>
+        <br clear="both" />
+        <br>
         <input type="submit" class="btn btn-primary" type="button" value="Submit" />
     </form>
-    
-    <hr>
+    <br>
  
     <table class="table table-bordered">
         <caption><h2> Current Slideshow Photos </h2></caption>
         <thead>
             <tr>
                 <th style="width: 150px;"> Thumbnail</th>
-                <th> Name </th>
+                 <th>Name </th>
                 <th> Description </th>
                 <th style="width: 100px;">Delete </th>
             </tr>
