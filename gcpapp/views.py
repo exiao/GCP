@@ -22,10 +22,10 @@ def home(request):
     data['images'] = images
     try:
         announcements = Announcement.objects.order_by('-pk')
-        top = announcements.filter(entry__title = 'Top')[0]
-        bottom_left = announcements.filter(entry__title = 'Bottom Left')[0]
-        bottom_mid = announcements.filter(entry__title = 'Bottom Middle')[0]
-        bottom_right = announcements.filter(entry__title = 'Bottom Right')[0]
+        top = announcements.get(entry = 'Top')
+        bottom_left = announcements.get(entry = 'Bottom Left')
+        bottom_mid = announcements.get(entry = 'Bottom Middle')
+        bottom_right = announcements.get(entry = 'Bottom Right')
         data['top'] = top
         data['bottom_left'] = bottom_left
         data['bottom_mid'] = bottom_mid
@@ -399,12 +399,12 @@ def superuser_content(request):
     data = {}
     if request.user.is_superuser == False:
         return HttpResponseRedirect('/')
-        
-    top = Announcement.objects.get_or_create(entry__title='Top')
-    bot_left = Announcement.objects.get_or_create(entry__title='Bottom Left')
-    bot_mid = Announcement.objects.get_or_create(entry__title='Bottom Middle')
-    bot_right = Announcement.objects.get_or_create(entry__title='Bottom Right')
-    models = [top[0], bot_left[0], bot_mid[0], bot_right[0]]
+
+    top = Announcement.objects.get_or_create(entry='Top')[0]
+    bot_left = Announcement.objects.get_or_create(entry='Bottom Left')[0]
+    bot_mid = Announcement.objects.get_or_create(entry='Bottom Middle')[0]
+    bot_right = Announcement.objects.get_or_create(entry='Bottom Right')[0]
+    #models = [top[0], bot_left[0], bot_mid[0], bot_right[0]]
     
     if request.method == 'POST':
         if request.POST.__contains__('delete_announcement'):
@@ -421,24 +421,24 @@ def superuser_content(request):
             image_id = request.POST['delete_image_id']
             Image.objects.get(id=int(image_id)).delete()
             return redirect('/superuser/?message=%s' % "Image deleted!")
-        
 
         formset = AnnouncementFormSet(request.POST)
         if formset.is_valid():
             instances = formset.save()
-        return HttpResponseRedirect('.')
-        #form = AnnouncementForm(request.POST)
-        #print(request.POST)
-        if form.is_valid():
-            model = form.save()
             return HttpResponseRedirect('.')
         else:
-            return HttpResponseRedirect('.')
+            print(formset)
     else:
         if request.GET.__contains__('message'):
             data['message'] = request.GET['message']
         
-        formset = AnnouncementFormSet()
+        formset = AnnouncementFormSet()  #queryset=Announcement.objects.order_by('pk').all())
+        
+        data['top'] = top
+        data['bot_left'] = bot_left
+        data['bot_mid'] = bot_mid
+        data['bot_right'] = bot_right
+
         data['forms'] = formset
         data['images'] = Image.objects.filter(section="homepage_slideshow")
         data.update(csrf(request))

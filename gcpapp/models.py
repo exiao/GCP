@@ -133,24 +133,20 @@ class Checklist(models.Model):
         return str(self.user) + "-" + str(self.academic_year.year)
 
 class Announcement(models.Model):
-    title = models.CharField(max_length=50)
-    body = models.TextField(default="")
+    title = models.CharField(max_length=50, blank=True, null=True)
+    body = models.TextField(default="", blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True,null=True)
     #images = models.ManyToManyField("Image")
-    entry = models.ForeignKey("Entry")
-    def __unicode__(self):
-        return self.title
-
-class Entry(models.Model):
-    title = models.CharField(max_length=50)
+    entry = models.CharField(max_length=50)
     def __unicode__(self):
         return self.title
 
 class AnnouncementForm(ModelForm):
     class Meta:
         model = Announcement
+        exclude = ('entry','timestamp')
 
-AnnouncementFormSet = modelformset_factory(Announcement, max_num=0)
+AnnouncementFormSet = modelformset_factory(Announcement, max_num=0, exclude=('entry',))
 
 class FinanceRequest(models.Model):
     user = models.ForeignKey(User)
