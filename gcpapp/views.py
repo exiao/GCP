@@ -439,8 +439,6 @@ def superuser_content(request):
             data['message'] = request.GET['message']
         
         formset = AnnouncementFormSet()
-        for form in formset:
-            print(form)
         data['forms'] = formset
         data['images'] = Image.objects.filter(section="homepage_slideshow")
         data.update(csrf(request))
