@@ -357,10 +357,12 @@ def superuser_finance(request):
     if request.user.is_superuser == False:
         return HttpResponseRedirect('/')
     if request.method == "GET":
-        finance_requests = FinanceRequest.objects.filter(is_answered=False,admin_deleted=False)
-        old_requests = FinanceRequest.objects.filter(is_answered=True,admin_deleted=False)
+        finance_requests = FinanceRequest.objects.filter(is_answered=False,admin_deleted=False).order_by('-timestamp')
+        old_requests = FinanceRequest.objects.filter(is_answered=True,admin_deleted=False).order_by('-timestamp')
         data['finance_requests'] = finance_requests
         data['old_requests'] = old_requests
+        if request.GET.__contains__('message'):
+            data['message'] = request.GET['message']
         return render_to_response('superuser/superuser_finance.html',data,context_instance=RequestContext(request))
     else:
         approved = request.POST.getlist('approve')
@@ -378,6 +380,45 @@ def superuser_finance(request):
             finance.save()
             #send_mail('ASUC Green Cat Finance Request', "You're finance request under the title: %s has been declined." % finance.title, EMAIL_HOST_USER, [finance.user.email])
         return redirect('superuser_finance')
+
+@login_required
+def superuser_finance_view(request,finance_id):
+    data = {}
+    if request.user.is_superuser == False:
+        return HttpResponseRedirect('/')
+    
+    finance = FinanceRequest.objects.get(id = int( finance_id ))
+    
+    if request.method == "GET":
+        finance_form = FinanceRequestForm(instance = finance )
+        data['finance'] = finance
+        data['finance_form'] = finance_form
+        
+        return render_to_response('superuser/superuser_finance_view.html',data,context_instance=RequestContext(request))
+    else: #POST
+        type= request.POST['type']
+        if type == "approve":
+            finance.is_approved = True
+            finance.is_answered = True
+            finance.save()
+            #send_mail('ASUC Green Cat Finance Request', "You're finance request for $%d has been approved." % finance.amount, EMAIL_HOST_USER, [finance.user.email])
+            message = "Finance request has been approved!"
+        elif type == "decline":
+            finance.is_approved = False
+            finance.is_answered = True
+            finance.save()
+            #send_mail('ASUC Green Cat Finance Request', "You're finance request for $%d has been declined." % finance.amount , EMAIL_HOST_USER, [finance.user.email])
+            message = "Finance request has been declined!"
+        elif type == "delete":
+            if finance.user_deleted:
+                finance.delete()
+            else:
+                finance.admin_deleted = True
+                finance.save()
+            message = "Finance request has been deleted!"
+            
+        #message variable needs to be assigned somewhere
+        return redirect('/superuser/finance/?message=%s' % message)
         
 @login_required
 def superuser_finance_delete(request):
@@ -736,6 +777,11 @@ def account_finance_request_create(request):
             # SEND MAIL?
             fin = form.save(commit=False)
             fin.user = request.user
+            
+            receipt_file = request.FILES['receipt_file']
+            obj = File.objects.create(file=receipt_file,name=str(receipt_file),user=request.user)
+            fin.receipt_file = obj
+            
             fin.save()
             message = 'Your finance request has been sent. You will be notified through email with the response.'
             return redirect('/account/finance_request/?message=%s' % message)

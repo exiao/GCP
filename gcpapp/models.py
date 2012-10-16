@@ -150,19 +150,33 @@ AnnouncementFormSet = modelformset_factory(Announcement, max_num=0, exclude=('en
 
 class FinanceRequest(models.Model):
     user = models.ForeignKey(User)
-    title = models.CharField(max_length=40)
     description = models.TextField(default="",blank=True)
+    reimburse_name = models.CharField(max_length=40)
+    student_id_or_group_num = models.CharField(max_length=40)
+    address = models.TextField(default="",blank=True)
     is_approved = models.BooleanField(default=False)
-    value = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    receipt_file = models.OneToOneField("File",null=True)
     timestamp = models.DateTimeField(auto_now_add=True,null=True)
     is_answered = models.BooleanField(default=False) #whether or not an admin responded
     admin_deleted = models.BooleanField(default=False)
     user_deleted = models.BooleanField(default=False)
+    
+    def delete(self, *args, **kwargs):
+        self.receipt_file.delete()
+        super(FinanceRequest, self).delete(*args, **kwargs)
+    def __unicode__(self):
+        return str(self.user.username) + " - $%d" % self.amount
 
 class FinanceRequestForm(ModelForm):
+    description = forms.CharField(label="Which point will this help you complete?",widget=forms.Textarea)
+    reimburse_name = forms.CharField(label="Who should we reimburse?")
+    student_id_or_group_num = forms.CharField(label="Student ID or Group Account #")
+    address = forms.CharField(label="Address (if student group, please use ASUC Address)",widget=forms.Textarea)
     class Meta:
         model = FinanceRequest
-        exclude = ('user','is_approved','is_answered','admin_deleted','user_deleted')
+        exclude = ('user','is_approved','is_answered','admin_deleted','user_deleted','receipt_file') #implicit fields
+        fields = ('amount','description','reimburse_name','student_id_or_group_num','address') #specifies order
 
 
 def create_user_profile(sender, instance, created, **kwargs):

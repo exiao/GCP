@@ -1,0 +1,173 @@
+{% extends "superuser/superuser.html" %}
+{% block title %}Admin - View Finance Request{% endblock %}
+
+{% block super_content %}
+{% if message %}
+    {{ message }}
+{% endif %}
+
+<div class="span12">
+<legend>
+    <h2> Finance Request</h2>
+  </legend>
+<form action="."  method="post" class="form-horizontal" id="financeForm" enctype="multipart/form-data">
+  
+  <br />
+  <div id="fields form">
+  
+  <div class="control-group">
+    <label class="control-label" >Group Name</label>
+        <div style="margin-left: 172px;" class="controls ">
+            <div style="padding-top: 5px; font-weight:bold;"> {{ finance.user.get_profile.group_name }} </div>
+        </div>
+  </div>
+  
+  <div class="control-group">
+    <label class="control-label" >Officer Name</label>
+        <div style="margin-left: 172px;" class="controls ">
+            <div style="padding-top: 5px;"> {{ finance.user.get_profile.officer_name }} </div>
+        </div>
+  </div>
+  
+  <div class="control-group">
+    <label class="control-label" >E-mail</label>
+        <div style="margin-left: 172px;" class="controls ">
+            <div style="padding-top: 5px;"> {{ finance.user.email }} </div>
+        </div>
+  </div>
+  
+  <div class="control-group">
+    <label class="control-label" >Submission Date</label>
+        <div style="margin-left: 172px;" class="controls ">
+            <div style="padding-top: 5px;"> {{ finance.timestamp }} </div>
+        </div>
+  </div>
+  
+    {% for field in finance_form %}
+      <div class="control-group">
+        {{ field.errors }}
+        
+        {% if field.html_name == "amount" %}
+        <label class="control-label" id="{{field.html_name}}">{{ field.label }}</label>
+        <div  class="controls">
+        $ 
+        {% else %}
+        <label class="control-label" id="{{field.html_name}}">{{ field.label }}</label>
+        <div style="margin-left: 172px;" class="controls ">
+        
+        {% endif %}
+        {{ field }}
+        
+          <span class="help-block">{{ field.help_text }}</span>
+        </div>
+      
+      </div>
+    {% endfor %}
+    
+    <!-- File Section -->
+    <div class="control-group">     
+        <label class="control-label" id="receipt_file">Receipt (Image)</label>
+        <div style="margin-left: 172px;" class="controls ">      
+          <a href="{{ finance.receipt_file.file.url}}" >
+                <img alt="{{ finance.receipt_file.name }}" src="{{ finance.receipt_file.file.url}}"> </img>
+          </a>    
+          <!-- <span class="help-block">{{ field.help_text }}</span> -->
+        </div>
+    </div>
+  <!-- end file section -->
+  </div>
+  
+  <br />
+
+<!-- no submit button for the form. Just used a form tag for styling -->
+  </form>
+  </div>
+  
+  {% if not finance.is_answered %} <!-- needs to be approved -->
+  <center>
+  <div >
+      <form action="." onsubmit="return confirm('You are about to APPROVE this finance request.');" method="post">{% csrf_token %}
+        <input type="hidden" name="type" value="approve" />
+        <input class="btn btn-success btn-large" style="width:500px;" type="submit" value="Approve" />
+      </form>
+      
+      <form action="." onsubmit="return confirm('You are about to DECLINE this finance request.');" method="post">{% csrf_token %}
+        <input type="hidden" name="type" value="decline" />
+        <input class="btn btn-danger btn-large" style="width:500px;" type="submit" value="Decline" />
+      </form>
+  </div>
+  </center>   
+  {% else %}
+  <center>
+  <div >
+      <form action="." onsubmit="return confirm('You are about to DELETE this finance request.');" method="post">{% csrf_token %}
+        <input type="hidden" name="type" value="delete" />
+        <input class="btn btn-danger btn-large" style="width:500px;" type="submit" value="Delete" />
+      </form>
+  </div>
+  </center>   
+  {% endif %}
+    
+
+{% endblock %}
+
+
+{% block super_js %}
+<script type="text/javascript" src="/static/jquery-validation-1.9.0/jquery.validate.min.js"></script>
+<script type="text/javascript">
+  $(document).ready( function() {
+    
+    $('input[type="text"], textarea').attr('readonly','readonly');
+    $('input[type="text"], textarea').css('cursor','default');
+    
+    $("#financeForm").validate({
+      rules: {
+        reimburse_name: {
+          required: true,
+          maxlength: 40,
+        },
+        student_id_or_group_num: {
+          required: true,
+          maxlength: 40,
+        },
+        description: {
+          required: true,
+        },
+        address: {
+          required: true,
+        },
+        amount: {
+          required: true,
+          number: true,
+        },
+        receipt_file: {
+          required: true,
+        },
+      } 
+    });
+    
+    // require price only has 2 decimals
+    (function($) {
+        $.fn.currencyFormat = function() {
+            this.each( function( i ) {
+                $(this).change( function( e ){
+                    if( isNaN( parseFloat( this.value ) ) ) return;
+                    if (this.value.split(".").length >1) {
+                      this.value = parseFloat(this.value).toFixed(2);
+                    }
+                });
+            });
+            return this; //for chaining
+        }
+    })( jQuery );
+    
+    $( function() {
+        $('#id_value').currencyFormat();
+    });
+  })
+  
+  
+    // end price validation
+</script>
+
+{% endblock %}

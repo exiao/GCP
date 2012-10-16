@@ -13,18 +13,31 @@
           <caption><h2> My Finance Requests </h2></caption>
           <thead>
             <tr>
-              <th> Title </th>
-              <th> Value </th>
-              <th> Date Sent </th>
-              <th> Status </th>
-              <th> Delete </th>
+              <th> Amount </th>
+              <th> Which point will this help you complete?</th>
+              <th> Who should we reimburse?  </th>
+              <th> Student ID or Group Account # </th>
+              <th> Address (if student group, please use ASUC Address) </th>
+              <th> Receipt </th>
+              <th> Submission Date </th>
+              <th> Status</th>
+              <th style="width: 70px;"> Delete</td>
             </tr>
           </thead>
           <tbody>
             {% for entry in my_finance_requests %}
             <tr>
-              <td> {{ entry.title }} </td>
-              <td> ${{ entry.value }} </td>
+              <td> ${{ entry.amount }} </td>
+              <td><textarea readonly style="cursor:default; width: 150px;"> {{ entry.description }} </textarea></td>
+              <td> {{ entry.reimburse_name }}</td>
+              <td> {{ entry.student_id_or_group_num }}</td>
+              <td> {{ entry.address }}</td>
+              <td> 
+                <a href="{{ entry.receipt_file.file.url}}" >
+                    <img alt="{{ entry.receipt_file.name }}" style="height:100px; width:200px;" src="{{ entry.receipt_file.file.url}}"> 
+                    </img>
+                </a> 
+              </td>
               <td> {{ entry.timestamp }}</td>
               <td>
                 {% if entry.is_answered %}

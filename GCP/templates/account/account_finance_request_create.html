@@ -10,7 +10,8 @@
 <legend>
     <h2> Finance Request</h2>
   </legend>
-<form action="."  method="post" class="form-horizontal" id="financeForm">{% csrf_token %}
+<form action="."  method="post" class="form-horizontal" id="financeForm" enctype="multipart/form-data">
+{% csrf_token %}
   
   <br />
   <div id="fields form">
@@ -18,7 +19,7 @@
       <div class="control-group">
         {{ field.errors }}
         
-        {% if field.html_name == "value" %}
+        {% if field.html_name == "amount" %}
         <label class="control-label" id="{{field.html_name}}">{{ field.label }}</label>
         <div  class="controls">
         $ 
@@ -31,9 +32,21 @@
         
           <span class="help-block">{{ field.help_text }}</span>
         </div>
+      
       </div>
     {% endfor %}
+    
+    <!-- File Section -->
+    <div class="control-group">     
+        <label class="control-label" id="receipt_file">Receipt (Image)</label>
+        <div style="margin-left: 172px;" class="controls ">      
+          <input type="file" name="receipt_file">     
+          <!-- <span class="help-block">{{ field.help_text }}</span> -->
+        </div>
+    </div>
+  <!-- end file section -->
   </div>
+  
   <br />
   <input type="submit" style="margin-left:100px" class="btn btn-primary" value="Submit" />
 
@@ -52,16 +65,26 @@
     
     $("#financeForm").validate({
       rules: {
-        title: {
+        reimburse_name: {
+          required: true,
+          maxlength: 40,
+        },
+        student_id_or_group_num: {
           required: true,
           maxlength: 40,
         },
         description: {
           required: true,
         },
-        value: {
+        address: {
+          required: true,
+        },
+        amount: {
           required: true,
           number: true,
+        },
+        receipt_file: {
+          required: true,
         },
       } 
     });
