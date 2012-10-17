@@ -20,20 +20,17 @@ def home(request):
     data={}
     images = Image.objects.filter(section="homepage_slideshow")
     data['images'] = images
-    try:
-        announcements = Announcement.objects.order_by('-pk')
-        top = announcements.get(entry = 'Top')
-        bottom_left = announcements.get(entry = 'Bottom Left')
-        bottom_mid = announcements.get(entry = 'Bottom Middle')
-        bottom_right = announcements.get(entry = 'Bottom Right')
-        data['top'] = top
-        data['bottom_left'] = bottom_left
-        data['bottom_mid'] = bottom_mid
-        data['bottom_right'] = bottom_right
-        
-        return render_to_response('home.html', data, context_instance=RequestContext(request))
-    except:
-        return render_to_response('home_orig.html',data, context_instance=RequestContext(request))
+    #announcements = Announcement.objects.order_by('-pk')
+    top = announcements.get_or_create(entry = 'Top')
+    bottom_left = announcements.get_or_create(entry = 'Bottom Left')
+    bottom_mid = announcements.get_or_create(entry = 'Bottom Middle')
+    bottom_right = announcements.get_or_create(entry = 'Bottom Right')
+    data['top'] = top
+    data['bottom_left'] = bottom_left
+    data['bottom_mid'] = bottom_mid
+    data['bottom_right'] = bottom_right
+    
+    return render_to_response('home.html', data, context_instance=RequestContext(request))
         
 def green_groups(request):
     verified_users = User.objects.filter(is_staff=False,is_superuser=False,is_active=True)
