@@ -463,7 +463,7 @@ def superuser_content(request):
         formset = AnnouncementFormSet(request.POST)
         if formset.is_valid():
             instances = formset.save()
-            return HttpResponseRedirect('.')
+            return redirect('/superuser/?message=%s' % "Announcements changed!")
         else:
             print(formset)
     else:
