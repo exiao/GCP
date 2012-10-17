@@ -21,10 +21,10 @@ def home(request):
     images = Image.objects.filter(section="homepage_slideshow")
     data['images'] = images
     #announcements = Announcement.objects.order_by('-pk')
-    top = announcements.get_or_create(entry = 'Top')
-    bottom_left = announcements.get_or_create(entry = 'Bottom Left')
-    bottom_mid = announcements.get_or_create(entry = 'Bottom Middle')
-    bottom_right = announcements.get_or_create(entry = 'Bottom Right')
+    top = Announcement.objects.get_or_create(entry = 'Top')
+    bottom_left = Announcement.objects.get_or_create(entry = 'Bottom Left')
+    bottom_mid = Announcement.objects.get_or_create(entry = 'Bottom Middle')
+    bottom_right = Announcement.objects.get_or_create(entry = 'Bottom Right')
     data['top'] = top
     data['bottom_left'] = bottom_left
     data['bottom_mid'] = bottom_mid
