@@ -626,7 +626,8 @@ def account_files(request,folder_id):
             data['last']=last
         else:
             data['last'] = tree[0]
-
+        
+        data['folder'] = folder
         data['folders'] = folders
         data['files'] = files
         data['folder_owner'] = folder.user
